@@ -1,6 +1,6 @@
 # 10Mil11 · Lámparas con Amor
 
-Sitio de [www.10mil11.com](https://www.10mil11.com/): lámparas de hierro y caireles
+Sitio de [10mil11.com](https://10mil11.com/): lámparas de hierro y caireles
 hechas a mano en La Plata. HTML estático, lo publica GitHub Pages con cada push a `main`.
 
 - **Catálogo** (`catalogo.js` + `img/tienda/`): sale de la tienda Nube tal cual,

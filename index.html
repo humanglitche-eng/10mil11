@@ -6,7 +6,7 @@
 <title>10Mil11 — Lámparas con Amor · Lámparas de hierro y caireles hechas a mano · La Plata</title>
 <meta name="description" content="Lámparas de hierro y caireles hechas a mano en La Plata. Catálogo encendido de 10Mil11 — Lámparas con Amor: de 1 a 4 pisos, rectangulares, veladores y a tu medida. Seña del 50%, lista en unos 30 días, envíos a todo el país.">
 <!--
-  SITIO OFICIAL de 10Mil11 · Lámparas con Amor (La Plata): www.10mil11.com, por
+  SITIO OFICIAL de 10Mil11 · Lámparas con Amor (La Plata): 10mil11.com, por
   GitHub Pages (humanglitche-eng/10mil11) desde el 2026-10-18. Hecho por Human
   Glitche · Visual Lab; nació como demo de venta el 2026-08-22.
   La MISMA página se sirve como vitrina en demos.hg-vl.com/demo-10mil11: ahí
@@ -36,7 +36,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" href="img/logo.jpg">
-<link rel="canonical" href="https://www.10mil11.com/">
+<link rel="canonical" href="https://10mil11.com/">
 <script>window.MUESTRA=['demos.hg-vl.com','0800webs.com'].includes(location.hostname);document.documentElement.classList.toggle('muestra',MUESTRA);</script>
 <style>
   :root{
@@ -545,7 +545,7 @@
     <a class="brand" href="#top"><img src="img/logo.jpg" alt="" style="width:34px;height:34px;object-fit:cover;border:1px solid var(--line);"><span><b style="font-family:'Cormorant Garamond',serif;font-size:16px;">10Mil11</b></span></a>
     <span>La Plata, Buenos Aires · Envíos a todo el país</span>
     <span>© 2026 10Mil11 — Lámparas con Amor</span>
-    <span class="foot-note">Todas las fotos y videos son reales: del Instagram @lamparas_10mil11 y de la tienda online oficial. Cada modelo del catálogo lleva su propia foto, nombre y precio de la tienda; los precios pueden cambiar.<span class="solo-muestra"> Esta es la vitrina de Human Glitche: el sitio de la marca es <a href="https://www.10mil11.com/">www.10mil11.com</a>.</span></span>
+    <span class="foot-note">Todas las fotos y videos son reales: del Instagram @lamparas_10mil11 y de la tienda online oficial. Cada modelo del catálogo lleva su propia foto, nombre y precio de la tienda; los precios pueden cambiar.<span class="solo-muestra"> Esta es la vitrina de Human Glitche: el sitio de la marca es <a href="https://10mil11.com/">10mil11.com</a>.</span></span>
   </div>
 </footer>
 
@@ -756,7 +756,7 @@ function reserva(){
   $('rSin').hidden=!!s; $('rCon').hidden=!s;
   if(!s) return;
   $('rMonto').innerHTML=`Seña: <b>${fmt(s.sena)}</b> · el resto (${fmt(s.saldo)}) al terminar`;
-  if(MUESTRA){ $('rBtn').textContent='Reservar en www.10mil11.com ↗'; $('rBtn').disabled=false; return; }
+  if(MUESTRA){ $('rBtn').textContent='Reservar en 10mil11.com ↗'; $('rBtn').disabled=false; return; }
   $('rBtn').textContent=forma==='trf'?'Reservar y ver los datos para transferir':forma==='mp'?'Reservar y pagar con Mercado Pago':'Elegí cómo pagar la seña';
   $('rBtn').disabled=!forma||enCurso;
 }
@@ -767,7 +767,7 @@ function notaFicha(d){
 }
 $('rBtn').addEventListener('click',async()=>{
   // Vitrina: el armado se muestra entero, pero la reserva se toma en el sitio de la marca.
-  if(MUESTRA) { location.href='https://www.10mil11.com/#armar'; return; }
+  if(MUESTRA) { location.href='https://10mil11.com/#armar'; return; }
   const d=base&&C.p[base]; if(!d||!forma||enCurso) return;
   const nombre=$('nombreR').value.trim(), tel=$('telR').value.trim();
   if(nombre.length<2) { $('rMsg').textContent='Contanos tu nombre.'; return $('nombreR').focus(); }
