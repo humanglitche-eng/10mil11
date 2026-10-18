@@ -234,18 +234,6 @@
   .ficha .plazo b{color:var(--gold);font-weight:500;}
   .ficha .btn{width:100%;text-align:center;white-space:normal;padding:13px 14px;line-height:1.35;}
   .ficha .fine{margin-top:10px;font-size:12px;color:var(--ink-mute);}
-  .reserva{border-top:1px solid var(--line);margin-top:18px;padding-top:16px;}
-  .reserva h4{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;margin-bottom:8px;}
-  .reserva .monto{font-size:14.5px;margin-bottom:12px;}
-  .reserva .monto b,.reserva.hecha b{color:var(--gold);font-weight:500;}
-  .reserva .chips{margin-bottom:14px;}
-  .reserva .btn{margin-top:8px;}
-  .reserva .btn[disabled]{opacity:.45;cursor:default;}
-  .reserva.hecha p{font-size:14.5px;margin-bottom:10px;}
-  .reserva.hecha dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px;margin:0 0 12px;}
-  .reserva.hecha dt{color:var(--ink-mute);font-family:'Jost';font-weight:500;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding-top:3px;}
-  .reserva.hecha dd{word-break:break-all;}
-  .copiar{background:none;border:1px solid var(--line);color:var(--gold);font-family:'Jost';font-size:11px;letter-spacing:.08em;padding:2px 8px;cursor:pointer;margin-left:4px;}
   .prod .wa.res{color:var(--gold);}
   @media(max-width:900px){ .cfg{grid-template-columns:minmax(0,1fr);gap:28px;} .ficha{position:static;} }
 
@@ -259,6 +247,55 @@
   .promesa i{color:var(--gold);}
   @media(max-width:980px){ .pasos{grid-template-columns:1fr 1fr;} }
   @media(max-width:560px){ .pasos{grid-template-columns:1fr;} }
+
+  /* ── LA LÁMPARA: ventana de producto (expositor de fotos) y compra directa ── */
+  dialog.pv{border:none;padding:0;margin:auto;width:min(1080px,100vw);max-width:100vw;max-height:100dvh;background:var(--bg);color:var(--ink);overflow:hidden;}
+  dialog.pv::backdrop{background:rgba(0,0,0,.8);backdrop-filter:blur(4px);}
+  body.con-pv{overflow:hidden;}
+  .pv-in{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);height:min(760px,100dvh);}
+  .pv-gal{background:#000;display:flex;flex-direction:column;min-height:0;}
+  .pv-foto{position:relative;overflow:hidden;flex:1;min-height:0;cursor:zoom-in;touch-action:pan-y;}
+  .pv-foto img{width:100%;height:100%;object-fit:contain;display:block;transform-origin:var(--ox,50%) var(--oy,50%);transition:transform .25s ease;}
+  .pv-foto.zoom{cursor:zoom-out;touch-action:none;}
+  .pv-foto.zoom img{transform:scale(2.3);}
+  .pv-flecha{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:rgba(11,9,7,.65);color:var(--ink);font-size:22px;line-height:1;cursor:pointer;}
+  .pv-flecha.ant{left:12px;} .pv-flecha.sig{right:12px;}
+  .pv-flecha:hover{border-color:var(--gold);color:var(--gold);}
+  .pv-ayuda{position:absolute;left:12px;bottom:10px;font-family:'Jost';font-weight:500;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,236,221,.7);pointer-events:none;text-shadow:0 1px 6px #000;}
+  .pv-foto.zoom .pv-ayuda{display:none;}
+  .pv-mini{display:flex;gap:8px;padding:10px;overflow-x:auto;}
+  .pv-mini button{flex:0 0 64px;height:64px;padding:0;border:1px solid var(--line);background:none;cursor:pointer;opacity:.55;transition:opacity .2s,border-color .2s;}
+  .pv-mini button[aria-current="true"]{border-color:var(--gold);opacity:1;}
+  .pv-mini img{width:100%;height:100%;object-fit:cover;}
+  .pv-dat{padding:40px 30px 28px;overflow-y:auto;min-height:0;}
+  .pv-x{position:absolute;top:10px;right:12px;z-index:5;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:rgba(11,9,7,.8);color:var(--ink);font-size:22px;line-height:1;cursor:pointer;}
+  .pv-x:hover{border-color:var(--gold);color:var(--gold);}
+  .pv-cat{font-family:'Jost';font-weight:500;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);}
+  .pv-dat h2{font-size:clamp(1.9rem,3vw,2.5rem);line-height:1.08;margin:6px 0 4px;}
+  .pv-s{color:var(--ink-dim);}
+  .pv-p{font-family:'Jost';font-weight:500;font-size:24px;color:var(--gold);margin:16px 0 4px;font-variant-numeric:tabular-nums;}
+  .pv-p small{display:block;font-size:13.5px;font-weight:400;color:var(--ink-dim);}
+  .pv-info{list-style:none;margin:16px 0 18px;display:grid;gap:8px;font-size:14px;color:var(--ink-dim);}
+  .pv-info li{padding-left:18px;position:relative;}
+  .pv-info li::before{content:'';position:absolute;left:0;top:8px;width:7px;height:7px;background:var(--gold);}
+  .pv-dat .btn{display:block;width:100%;text-align:center;margin-top:10px;white-space:normal;}
+  .pv-dat .btn[disabled]{opacity:.5;cursor:default;}
+  .pv-volver{background:none;border:none;color:var(--ink-dim);font-family:'Jost';font-size:13px;cursor:pointer;padding:0;margin-bottom:12px;}
+  .pv-volver:hover{color:var(--gold);}
+  .pv-res{display:flex;gap:12px;align-items:center;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+  .pv-res img{width:58px;height:58px;object-fit:cover;border:1px solid var(--line);}
+  .pv-res b{display:block;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;line-height:1.2;}
+  #pvForm h3{font-size:24px;margin-bottom:10px;}
+  #pvForm .fld{margin-bottom:12px;}
+  #pvForm .chips{margin-bottom:14px;}
+  .pv-tot{font-size:15px;margin:4px 0;}
+  .pv-tot b{color:var(--gold);font-weight:500;}
+  @media(max-width:860px){
+    dialog.pv{height:100dvh;width:100vw;overflow-y:auto;}
+    .pv-in{grid-template-columns:minmax(0,1fr);height:auto;}
+    .pv-foto{height:min(78vw,62dvh);flex:none;}
+    .pv-dat{overflow:visible;padding:24px 18px 34px;}
+  }
 
   .rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.16,1,.3,1);}
   .rv.in{opacity:1;transform:none;}
@@ -277,7 +314,6 @@
     </a>
     <div class="nav-links">
       <a href="#catalogo">Catálogo</a>
-      <a href="#armar">A tu medida</a>
       <a href="#comprar">Cómo se compra</a>
       <a href="#jardin">El jardín</a>
       <a class="imm" href="inmersivo.html">✦ Inmersiva</a>
@@ -313,11 +349,12 @@
     </div>
     <div class="tabs" id="tabs" role="tablist"></div>
     <div class="grid" id="grid"></div>
-    <p class="cat-note">Catálogo, categorías y precios de la <a href="https://lamparasconamor10mil11.mitiendanube.com/" target="_blank" rel="noopener">tienda online oficial</a> (<span id="relevado"></span>). ¿Otra medida, otros caireles u otro color? <a href="#armar">Armala a tu medida</a>.</p>
+    <p class="cat-note">Catálogo, categorías y precios de la <a href="https://lamparasconamor10mil11.mitiendanube.com/" target="_blank" rel="noopener">tienda online oficial</a> (<span id="relevado"></span>). ¿Otra medida o color? <a href="https://wa.me/5492214545088?text=Hola%2010Mil11!%20Quiero%20consultar%20por%20una%20l%C3%A1mpara%20a%20medida." target="_blank" rel="noopener">Consultalo por WhatsApp</a>.</p>
   </div>
 </section>
 
-<section id="armar">
+<!-- «A tu medida» en pausa desde el 2026-10-18: se compra directo desde la ventana de cada lámpara. -->
+<section id="armar" hidden>
   <div class="wrap rv">
     <div class="sec-head">
       <div class="rule"><i></i><s></s><s></s><s></s></div>
@@ -433,23 +470,6 @@
         <div class="plazo" id="plazo"></div>
         <a class="btn solid" id="fichaWa" href="#" target="_blank" rel="noopener">Mandar la ficha por WhatsApp</a>
         <p class="fine">El taller te confirma precio, fecha y envío. Se reserva con una seña del 50%.</p>
-        <div class="reserva" id="reserva" hidden>
-          <h4>Comprala online</h4>
-          <p class="fine" id="rSin">Para comprarla online, elegí un modelo del catálogo con el botón «Comprar».</p>
-          <div id="rCon" hidden>
-            <div class="chips" id="rModo"></div>
-            <p class="monto" id="rMonto"></p>
-            <div class="flds">
-              <label class="fld">Tu nombre<input id="nombreR" autocomplete="name" maxlength="120"></label>
-              <label class="fld">Tu WhatsApp<input id="telR" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" placeholder="ej. 221 555 0000"></label>
-            </div>
-            <span class="sub-l" style="margin-top:12px;">Pagás con</span>
-            <div class="chips" id="rFormas"></div>
-            <button type="button" class="btn solid" id="rBtn" disabled>Elegí cómo pagar la seña</button>
-            <p class="fine" id="rMsg" role="status" aria-live="polite"></p>
-          </div>
-        </div>
-        <div class="reserva hecha" id="rHecha" hidden aria-live="polite"></div>
       </aside>
     </div>
   </div>
@@ -552,6 +572,55 @@
 
 <span class="demo-tag">DEMO · propuesta de Human Glitche</span>
 
+<dialog class="pv" id="pv" aria-labelledby="pvN">
+  <button class="pv-x" id="pvX" type="button" aria-label="Cerrar">×</button>
+  <div class="pv-in">
+    <div class="pv-gal">
+      <div class="pv-foto" id="pvFoto">
+        <img id="pvImg" alt="">
+        <button class="pv-flecha ant" type="button" aria-label="Foto anterior">‹</button>
+        <button class="pv-flecha sig" type="button" aria-label="Foto siguiente">›</button>
+        <span class="pv-ayuda">Tocá la foto para ampliar</span>
+      </div>
+      <div class="pv-mini" id="pvMini"></div>
+    </div>
+    <div class="pv-dat">
+      <div id="pvFicha">
+        <p class="pv-cat" id="pvCat"></p>
+        <h2 id="pvN"></h2>
+        <p class="pv-s" id="pvS"></p>
+        <p class="pv-p" id="pvP"></p>
+        <ul class="pv-info">
+          <li>Hecha a mano en el taller: lista en unos 30 días.</li>
+          <li>Envío a todo el país o retiro en el taller, en La Plata.</li>
+          <li>Pagás el total o la reservás con el 50%.</li>
+        </ul>
+        <button class="btn solid" id="pvComprar" type="button" hidden>Comprar</button>
+        <a class="btn" id="pvWa" href="#" target="_blank" rel="noopener">Consultar por WhatsApp</a>
+      </div>
+      <form id="pvForm" hidden novalidate>
+        <button class="pv-volver" id="pvVolver" type="button">← Ver la lámpara</button>
+        <div class="pv-res"><img id="pvResImg" alt=""><div><b id="pvResN"></b><span id="pvResS" style="color:var(--ink-dim);font-size:13.5px"></span></div></div>
+        <h3>Tus datos</h3>
+        <div class="chips" id="pvModo"></div>
+        <label class="fld">Nombre y apellido<input id="fNom" autocomplete="name" maxlength="120"></label>
+        <label class="fld">WhatsApp<input id="fTel" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" placeholder="ej. 221 555 0000"></label>
+        <label class="fld">Mail<input id="fMail" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="para el comprobante"></label>
+        <span class="sub-l">Entrega</span>
+        <div class="chips" id="pvEnt"></div>
+        <label class="fld" id="fDirL" hidden>Dirección, localidad y código postal<input id="fDir" autocomplete="street-address" maxlength="300"></label>
+        <span class="sub-l">Pagás con</span>
+        <div class="chips" id="pvForma"></div>
+        <p class="pv-tot" id="pvTot"></p>
+        <button class="btn solid" id="pvPagar" type="submit">Comprar</button>
+        <p class="fine" id="pvMsg" role="status" aria-live="polite"></p>
+        <p class="fine">El envío se cotiza según tu localidad y se paga aparte. Con el pago confirmado te pasamos la fecha de entrega.</p>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+
 <script src="catalogo.js"></script>
 <script>
 'use strict';
@@ -575,16 +644,14 @@ function renderGrid(){
   gridEl.innerHTML=C.tabs[cur][1].map((id,i)=>{
     const d=C.p[id];
     const msg=encodeURIComponent(`Hola 10Mil11! Vi la ${d.full} (${fmt(d.p)}) en la web y quiero saber más.`);
-    return `<article class="prod${showroom?' on':''}" tabindex="0" style="--d:${Math.min(i,12)*90}ms">
-      <div class="ph"><img src="${esc(d.img)}" alt="${esc(d.full)}" loading="lazy"><span class="hint">${touch?'tocá y se enciende':'pasá el cursor'}</span></div>
+    return `<article class="prod${showroom?' on':''}" tabindex="0" data-id="${esc(id)}" style="--d:${Math.min(i,12)*90}ms">
+      <div class="ph"><img src="${esc(d.img)}" alt="${esc(d.full)}" loading="lazy"><span class="hint">${touch?'tocá para verla':'pasá el cursor · clic para verla'}</span></div>
       <div class="prod-body">
         <div class="prod-top"><h3>${esc(d.n)}</h3><span class="price">${fmt(d.p)}</span></div>
         <div class="d">${esc(d.s)}</div>
         <div class="links">
+          ${window.RESERVA&&RESERVA.precios[d.a]?`<a class="wa res" href="#comprar=${esc(id)}" data-comprar="${esc(id)}">Comprar ✦</a>`:''}
           <a class="wa" href="${WA}${msg}" target="_blank" rel="noopener">WhatsApp →</a>
-          ${window.RESERVA&&RESERVA.precios[d.a]?`<a class="wa res" href="#armar" data-reservar="${esc(id)}">Comprar ✦</a>`:''}
-          <a class="wa" href="#armar" data-armar="${esc(id)}">A tu medida</a>
-          <a class="wa" href="${esc(d.url)}" target="_blank" rel="noopener">En la tienda ↗</a>
         </div>
       </div>
     </article>`;}).join('');
@@ -719,122 +786,6 @@ function armar(){
   $('fichaWa').href=WA+encodeURIComponent(msg);
   if(typeof reserva==='function') reserva();
 }
-// ── Compra online: el total o la seña, por Mercado Pago o transferencia, contra la API ──
-// La página nunca manda precios: pide la variante «total» o «sena» del ítem y la API
-// calcula lo que se cobra. Si la API no contesta o el comercio no cobra online, no aparece nada
-// nuevo y la página sigue como antes (WhatsApp).
-const API=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'http://127.0.0.1:3939':'https://api.hg-vl.com';
-const RES={listo:false,formas:[],trf:null,precios:{}};
-let forma='', modo='total', idem='', enCurso=false;
-Promise.all(['cobro','catalogo'].map(s=>fetch(`${API}/v1/10mil11/${s}`).then(r=>r.ok?r.json():null).catch(()=>null)))
-  .then(([cobro,cat])=>{
-    if(!cobro||!cat||!Array.isArray(cat.items)) return;
-    if((cobro.online||[]).some(o=>o.proveedor==='mercadopago')) RES.formas.push('mp');
-    if(cobro.transferencia) { RES.formas.push('trf'); RES.trf=cobro.transferencia; }
-    cat.items.forEach(it=>{
-      const v=Object.fromEntries((it.variantes||[]).map(x=>[x.slug,x.precio/100]));
-      if(v.total||v.sena) RES.precios[it.slug]={total:v.total||0,sena:v.sena||0,saldo:v.saldo||0};
-    });
-    if(!RES.formas.length||!Object.keys(RES.precios).length) return;
-    RES.listo=true; window.RESERVA=RES;
-    document.querySelectorAll('[data-si-reserva]').forEach(e=>e.hidden=false);
-    $('rFormas').innerHTML=RES.formas.map(f=>`<button type="button" class="chip txt" data-f="${f}" aria-pressed="false">${f==='mp'?'Mercado Pago':'Transferencia'}</button>`).join('');
-    $('rFormas').querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{forma=b.dataset.f;
-      $('rFormas').querySelectorAll('.chip').forEach(o=>o.setAttribute('aria-pressed',String(o===b)));reserva();}));
-    if(RES.formas.length===1){ forma=RES.formas[0]; $('rFormas').firstElementChild.setAttribute('aria-pressed','true'); }
-    renderGrid(); armar();
-  });
-gridEl.addEventListener('click',e=>{
-  const a=e.target.closest('a[data-reservar]'); if(!a) return;
-  e.preventDefault(); personalizar(a.dataset.reservar);
-  setTimeout(()=>$('nombreR').focus({preventScroll:true}),700);
-});
-['nombreR','telR'].forEach(id=>$(id).addEventListener('input',()=>{$('rMsg').textContent='';}));
-
-function reserva(){
-  const d=base&&C.p[base], s=d&&RES.listo&&RES.precios[d.a];
-  $('reserva').hidden=!RES.listo||!!$('rHecha').dataset.codigo;
-  $('rSin').hidden=!!s; $('rCon').hidden=!s;
-  if(!s) return;
-  const modos=[s.total&&'total',s.sena&&'sena'].filter(Boolean);
-  if(!modos.includes(modo)) modo=modos[0];
-  $('rModo').innerHTML=modos.length>1?modos.map(m=>`<button type="button" class="chip txt" data-m="${m}" aria-pressed="${m===modo}">${m==='total'?'Pago total':'Seña 50%'}</button>`).join(''):'';
-  $('rModo').querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{modo=b.dataset.m;reserva();}));
-  $('rMonto').innerHTML=modo==='total'
-    ?`Total: <b>${fmt(s.total)}</b> · lista en unos 30 días`
-    :`Seña: <b>${fmt(s.sena)}</b> · el resto (${fmt(s.saldo)}) al terminar`;
-  if(MUESTRA){ $('rBtn').textContent='Comprar en 10mil11.com ↗'; $('rBtn').disabled=false; return; }
-  $('rBtn').textContent=modo==='total'
-    ?(forma==='mp'?`Pagar ${fmt(s.total)} con Mercado Pago`:forma==='trf'?'Comprar y ver los datos para transferir':'Elegí cómo pagar')
-    :(forma==='mp'?'Reservar y pagar la seña con Mercado Pago':forma==='trf'?'Reservar y ver los datos para transferir':'Elegí cómo pagar la seña');
-  $('rBtn').disabled=!forma||enCurso;
-}
-function notaFicha(d){
-  const t=[...document.querySelectorAll('#fichaDl dt')].map(x=>[x.textContent,x.nextElementSibling.textContent])
-    .filter(([k,v])=>k!=='Modelo'&&v!=='a elegir').map(([k,v])=>`${k}: ${v}`).join(' · ');
-  return `${modo==='total'?'Compra web (pago total)':'Reserva web con seña'} · ${d.full}${t?' · '+t:''}`.slice(0,500);
-}
-$('rBtn').addEventListener('click',async()=>{
-  // Vitrina: el armado se muestra entero, pero la reserva se toma en el sitio de la marca.
-  if(MUESTRA) { location.href='https://10mil11.com/#armar'; return; }
-  const d=base&&C.p[base]; if(!d||!forma||enCurso) return;
-  const nombre=$('nombreR').value.trim(), tel=$('telR').value.trim();
-  if(nombre.length<2) { $('rMsg').textContent='Contanos tu nombre.'; return $('nombreR').focus(); }
-  if(!/^[+0-9 ()-]{8,40}$/.test(tel)) { $('rMsg').textContent='Dejanos un WhatsApp para avisarte (solo números).'; return $('telR').focus(); }
-  enCurso=true; reserva(); $('rMsg').textContent=modo==='total'?'Tomando tu compra…':'Reservando…';
-  idem=idem||(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2));
-  const loc=$('localidad').value.trim();
-  const cuerpo={items:[{item:d.a,variante:modo,cantidad:1}],
-    cliente:{nombre:nombre.slice(0,120),telefono:tel,...(st.entrega==='envio'&&loc?{direccion:loc.slice(0,300)}:{})},
-    nota:notaFicha(d),idem,canal:'web',pago:forma==='mp'?'online':'transferencia',...(st.entrega?{entrega:st.entrega}:{})};
-  try{
-    const r=await fetch(`${API}/v1/10mil11/pedidos`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(cuerpo)});
-    const p=await r.json().catch(()=>({}));
-    if(!r.ok||!p.codigo) throw new Error(p.error||'no pudimos tomar el pedido');
-    if(forma==='mp'){
-      $('rMsg').textContent='Abriendo Mercado Pago…';
-      const q=await fetch(`${API}/v1/10mil11/pedidos/${encodeURIComponent(p.codigo)}/pagar`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({proveedor:'mercadopago'})});
-      const j=await q.json().catch(()=>({}));
-      if(q.ok&&j.url) { location.href=j.url; return; }
-      mostrarHecha(p,d,'mp-fallo');
-    } else mostrarHecha(p,d,'trf');
-  }catch(e){
-    $('rMsg').textContent=`No se pudo completar (${e.message}). Probá de nuevo o escribinos por WhatsApp.`;
-  }finally{ enCurso=false; reserva(); }
-});
-function mostrarHecha(p,d,via){
-  const h=$('rHecha'); h.dataset.codigo=p.codigo; idem='';
-  const total=fmt(p.total/100), t=RES.trf||{}, compra=modo==='total';
-  const que=compra?`Compré la ${d.full} (código ${p.codigo})`:`Reservé la ${d.full} (código ${p.codigo})`;
-  const wa=WA+encodeURIComponent(via==='trf'
-    ?`Hola 10Mil11! ${que} y transferí ${compra?'':'la seña de '}${total}. Te mando el comprobante.`
-    :`Hola 10Mil11! ${que}, ${compra?'':'seña de '}${total}, pero no pude pagar con Mercado Pago. ¿Cómo sigo?`);
-  const fila=(k,v)=>v?`<dt>${k}</dt><dd><span>${esc(v)}</span> <button type="button" class="copiar" data-c="${esc(v)}">copiar</button></dd>`:'';
-  h.innerHTML=via==='trf'
-    ?`<h4>${compra?'¡Listo!':'¡Reservada!'} Código <b>${esc(p.codigo)}</b></h4>
-      <p>Transferí <b>${total}</b> para confirmar${compra?' la compra':'la'}:</p>
-      <dl>${fila('Alias',t.alias)}${fila('CBU',t.cbu)}${t.titular?`<dt>Titular</dt><dd>${esc(t.titular)}</dd>`:''}${t.banco?`<dt>Banco</dt><dd>${esc(t.banco)}</dd>`:''}</dl>
-      ${t.nota?`<p class="fine">${esc(t.nota)}</p>`:''}
-      <button type="button" class="btn solid" id="yaTrf">Ya transferí</button>
-      <a class="btn" href="${wa}" target="_blank" rel="noopener">Mandar el comprobante por WhatsApp</a>
-      <p class="fine" id="trfMsg" role="status">Con ${compra?'el pago':'la seña'} confirmad${compra?'o':'a'} te pasamos la fecha de entrega.</p>`
-    :`<h4>Tu ${compra?'compra':'reserva'} quedó anotada: <b>${esc(p.codigo)}</b></h4>
-      <p>No pudimos abrir Mercado Pago. Escribinos y te pasamos otra forma de pagar ${compra?'los':'la seña de'} <b>${total}</b>.</p>
-      <a class="btn solid" href="${wa}" target="_blank" rel="noopener">Seguir por WhatsApp</a>`;
-  h.hidden=false; $('reserva').hidden=true;
-  h.querySelectorAll('.copiar').forEach(b=>b.addEventListener('click',()=>{
-    (navigator.clipboard?navigator.clipboard.writeText(b.dataset.c):Promise.reject()).then(()=>{b.textContent='copiado';setTimeout(()=>b.textContent='copiar',1500);}).catch(()=>{});
-  }));
-  const y=$('yaTrf');
-  if(y) y.addEventListener('click',async()=>{
-    y.disabled=true;
-    const r=await fetch(`${API}/v1/10mil11/pedidos/${encodeURIComponent(p.codigo)}/transferencia`,{method:'POST'}).catch(()=>null);
-    $('trfMsg').textContent=r&&r.ok?'¡Gracias! Lo confirmamos apenas veamos la transferencia.':'No pudimos avisar: mandanos el comprobante por WhatsApp.';
-    if(!(r&&r.ok)) y.disabled=false;
-  });
-  h.scrollIntoView({behavior:'smooth',block:'center'});
-}
-
 armar();
 })();
 document.getElementById('allOn').addEventListener('click',function(){
@@ -885,9 +836,190 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
 }
 </script>
 <script>
+'use strict';
+// ── La lámpara: ventana de producto (expositor de fotos) y compra directa ──
+// La foto o el nombre de una tarjeta abren la ventana; «Comprar» va derecho al
+// formulario: nombre, WhatsApp, mail, entrega, total o seña, Mercado Pago o
+// transferencia. La página nunca manda precios: pide la variante (`total` o
+// `sena`) y la API calcula lo que se cobra. Mercado Pago devuelve al cliente a
+// gracias.html (`volver`, que la API solo acepta hacia un origen de la marca).
+// En la vitrina se muestra todo igual, pero comprar lleva al sitio de la marca.
+(()=>{
+const API=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'http://127.0.0.1:3939':'https://api.hg-vl.com';
+const SITIO='https://10mil11.com/';
+const RES={listo:false,formas:[],trf:null,precios:{}};
+const $=id=>document.getElementById(id);
+const dlg=$('pv'), fz=$('pvFoto');
+let id=null, foto=0, modo='total', forma='', entrega='', idem='', enCurso=false;
+
+// Qué se puede cobrar. Si la API no contesta, la ventana igual se abre y ofrece WhatsApp.
+Promise.all(['cobro','catalogo'].map(s=>fetch(`${API}/v1/10mil11/${s}`).then(r=>r.ok?r.json():null).catch(()=>null)))
+  .then(([cobro,cat])=>{
+    if(!cobro||!cat||!Array.isArray(cat.items)) return;
+    if((cobro.online||[]).some(o=>o.proveedor==='mercadopago')) RES.formas.push('mp');
+    if(cobro.transferencia){ RES.formas.push('trf'); RES.trf=cobro.transferencia; }
+    cat.items.forEach(it=>{
+      const v=Object.fromEntries((it.variantes||[]).map(x=>[x.slug,x.precio/100]));
+      if(v.total||v.sena) RES.precios[it.slug]={total:v.total||0,sena:v.sena||0,saldo:v.saldo||0};
+    });
+    if(!RES.formas.length||!Object.keys(RES.precios).length) return;
+    RES.listo=true; window.RESERVA=RES;
+    forma=RES.formas[0];                       // Mercado Pago primero si está: un paso menos
+    document.querySelectorAll('[data-si-reserva]').forEach(e=>e.hidden=false);
+    renderGrid();
+    if(id) pintar();
+    desdeHash();
+  });
+
+// El catálogo abre la ventana.
+gridEl.addEventListener('click',e=>{
+  const c=e.target.closest('a[data-comprar]');
+  if(c){ e.preventDefault(); abrir(c.dataset.comprar,true); return; }
+  if(e.target.closest('a')) return;
+  const art=e.target.closest('.prod');
+  if(art&&e.target.closest('.ph,h3')) abrir(art.dataset.id,false);
+});
+gridEl.addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.matches('.prod')) abrir(e.target.dataset.id,false); });
+
+function abrir(pid,comprar){
+  if(!C.p[pid]) return;
+  if(pid!==id){ idem=''; foto=0; $('pvMsg').textContent=''; }
+  id=pid; pintar(); paso(comprar&&RES.listo?'form':'ficha');
+  if(!dlg.open){ dlg.showModal(); document.body.classList.add('con-pv'); }
+  // Si se pidió comprar y la API todavía no contestó, el hash lo recuerda: cuando conteste, va al formulario.
+  history.replaceState(null,'',`#${comprar?'comprar':'producto'}=${encodeURIComponent(pid)}`);
+}
+function cerrar(){ if(dlg.open) dlg.close(); }
+dlg.addEventListener('close',()=>{
+  document.body.classList.remove('con-pv'); fz.classList.remove('zoom');
+  if(/^#(producto|comprar)=/.test(location.hash)) history.replaceState(null,'',location.pathname+location.search);
+});
+$('pvX').addEventListener('click',cerrar);
+dlg.addEventListener('click',e=>{ if(e.target===dlg) cerrar(); });
+// #producto=<id> abre la lámpara, #comprar=<id> el formulario: links para compartir y la salida de la vitrina.
+function desdeHash(){
+  const m=/^#(producto|comprar)=([^&]+)/.exec(location.hash);
+  if(m) abrir(decodeURIComponent(m[2]),m[1]==='comprar');
+}
+
+// ── el expositor ──
+const fotos=()=>{ const d=C.p[id]; return d.g&&d.g.length?d.g:[d.img]; };
+function verFoto(){
+  const fs=fotos(), d=C.p[id];
+  $('pvImg').src=fs[foto]; $('pvImg').alt=`${d.full}${fs.length>1?` — foto ${foto+1} de ${fs.length}`:''}`;
+  fz.classList.remove('zoom');
+  $('pvMini').querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-current',String(i===foto)));
+}
+function mover(k){ const n=fotos().length; if(n<2) return; foto=(foto+k+n)%n; verFoto(); }
+dlg.querySelector('.pv-flecha.ant').addEventListener('click',e=>{ e.stopPropagation(); mover(-1); });
+dlg.querySelector('.pv-flecha.sig').addEventListener('click',e=>{ e.stopPropagation(); mover(1); });
+$('pvMini').addEventListener('click',e=>{ const b=e.target.closest('button[data-i]'); if(b){ foto=+b.dataset.i; verFoto(); } });
+dlg.addEventListener('keydown',e=>{
+  if(e.target.matches('input,textarea,select')) return;
+  if(e.key==='ArrowLeft') mover(-1); else if(e.key==='ArrowRight') mover(1);
+});
+// Tocar amplía justo donde tocaste; con el zoom puesto, el cursor (o el dedo apoyado) recorre la foto.
+const origen=e=>{ const r=fz.getBoundingClientRect();
+  fz.style.setProperty('--ox',Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100))+'%');
+  fz.style.setProperty('--oy',Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100))+'%'); };
+fz.addEventListener('click',e=>{ if(e.target.closest('.pv-flecha')) return; origen(e); fz.classList.toggle('zoom'); });
+fz.addEventListener('pointermove',e=>{ if(fz.classList.contains('zoom')&&(e.pointerType==='mouse'||e.buttons)) origen(e); });
+let x0=null;   // sin zoom, deslizar cambia de foto
+fz.addEventListener('touchstart',e=>{ x0=fz.classList.contains('zoom')?null:e.touches[0].clientX; },{passive:true});
+fz.addEventListener('touchend',e=>{ if(x0==null) return; const dx=e.changedTouches[0].clientX-x0; x0=null; if(Math.abs(dx)>50) mover(dx<0?1:-1); },{passive:true});
+
+// ── la ficha ──
+function pintar(){
+  const d=C.p[id], pr=RES.listo&&RES.precios[d.a];
+  const cat=(C.tabs.find(([n,ids])=>n!=='Destacadas'&&n!=='Todos'&&ids.includes(id))||[''])[0];
+  $('pvCat').textContent=cat||'Lámparas';
+  $('pvN').textContent=d.n; $('pvS').textContent=d.s;
+  $('pvP').innerHTML=fmt(d.p)+(pr&&pr.sena?`<small>o reservala con ${fmt(pr.sena)} (el 50%)</small>`:'');
+  $('pvWa').href=WA+encodeURIComponent(`Hola 10Mil11! Vi la ${d.full} (${fmt(d.p)}) en la web y quiero saber más.`);
+  $('pvComprar').hidden=!pr;
+  const fs=fotos(); foto=Math.min(foto,fs.length-1);
+  $('pvMini').innerHTML=fs.length>1?fs.map((f,i)=>`<button type="button" data-i="${i}" aria-label="Foto ${i+1} de ${fs.length}"><img src="${esc(f)}" alt="" loading="lazy"></button>`).join(''):'';
+  $('pvMini').hidden=fs.length<2;
+  dlg.querySelectorAll('.pv-flecha').forEach(b=>b.hidden=fs.length<2);
+  verFoto();
+  $('pvResImg').src=d.img; $('pvResN').textContent=d.n; $('pvResS').textContent=d.s;
+  form();
+}
+function paso(p){
+  $('pvFicha').hidden=p!=='ficha'; $('pvForm').hidden=p!=='form';
+  if(p==='form'&&!matchMedia('(pointer:coarse)').matches) setTimeout(()=>$('fNom').focus({preventScroll:true}),60);
+  if(p==='form'&&matchMedia('(max-width:860px)').matches) setTimeout(()=>$('pvForm').scrollIntoView({block:'start'}),60);
+}
+$('pvComprar').addEventListener('click',()=>paso('form'));
+$('pvVolver').addEventListener('click',()=>paso('ficha'));
+
+// ── el formulario ──
+function chips(el,opts,val,set){
+  el.innerHTML=opts.map(([v,t])=>`<button type="button" class="chip txt" data-v="${v}" aria-pressed="${v===val}">${t}</button>`).join('');
+  el.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{ set(b.dataset.v); $('pvMsg').textContent=''; form(); }));
+}
+function form(){
+  const d=C.p[id], pr=RES.listo&&RES.precios[d.a];
+  if(!pr) return;
+  const modos=[pr.total&&'total',pr.sena&&'sena'].filter(Boolean);
+  if(!modos.includes(modo)) modo=modos[0];
+  chips($('pvModo'),modos.map(m=>[m,m==='total'?`Pago total · ${fmt(pr.total)}`:`Seña 50% · ${fmt(pr.sena)}`]),modo,v=>modo=v);
+  chips($('pvEnt'),[['envio','Envío a domicilio'],['retiro','Retiro en el taller']],entrega,v=>entrega=v);
+  chips($('pvForma'),RES.formas.map(f=>[f,f==='mp'?'Mercado Pago':'Transferencia']),forma,v=>forma=v);
+  $('fDirL').hidden=entrega!=='envio';
+  const monto=modo==='total'?pr.total:pr.sena;
+  $('pvTot').innerHTML=modo==='total'?`Total: <b>${fmt(pr.total)}</b>`:`Seña: <b>${fmt(pr.sena)}</b> · el resto (${fmt(pr.saldo)}) cuando esté lista`;
+  $('pvPagar').textContent=MUESTRA?'Comprar en 10mil11.com ↗'
+    :forma==='mp'?`Pagar ${fmt(monto)} con Mercado Pago`:forma==='trf'?'Confirmar y ver los datos para transferir':'Elegí cómo pagar';
+  $('pvPagar').disabled=enCurso;
+}
+$('pvForm').addEventListener('input',()=>{ $('pvMsg').textContent=''; });
+$('pvForm').addEventListener('submit',async e=>{
+  e.preventDefault(); if(enCurso) return;
+  // Vitrina: el formulario se muestra entero, pero la compra se toma en el sitio de la marca.
+  if(MUESTRA){ location.href=SITIO+'#comprar='+encodeURIComponent(id); return; }
+  const d=C.p[id], msg=t=>{ $('pvMsg').textContent=t; };
+  const nom=$('fNom').value.trim(), tel=$('fTel').value.trim(), mail=$('fMail').value.trim(), dir=$('fDir').value.trim();
+  if(nom.length<2){ msg('Contanos tu nombre.'); return $('fNom').focus(); }
+  if(!/^[+0-9 ()-]{8,40}$/.test(tel)){ msg('Dejanos un WhatsApp para avisarte (solo números).'); return $('fTel').focus(); }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ msg('Revisá el mail: ahí te mandamos el comprobante.'); return $('fMail').focus(); }
+  if(!entrega){ msg('Elegí envío a domicilio o retiro en el taller.'); return; }
+  if(entrega==='envio'&&dir.length<6){ msg('Para el envío, dejanos dirección, localidad y código postal.'); return $('fDir').focus(); }
+  if(!forma){ msg('Elegí cómo pagar.'); return; }
+  enCurso=true; form(); msg(modo==='total'?'Tomando tu compra…':'Reservando…');
+  idem=idem||(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2));
+  const cuerpo={items:[{item:d.a,variante:modo,cantidad:1}],
+    cliente:{nombre:nom.slice(0,120),telefono:tel,email:mail.slice(0,254),...(entrega==='envio'?{direccion:dir.slice(0,300)}:{})},
+    nota:`${modo==='total'?'Compra web (pago total)':'Reserva web con seña'} · ${d.full} · ${entrega==='envio'?'Envío a '+dir:'Retira en el taller'}`.slice(0,500),
+    idem,canal:'web',pago:forma==='mp'?'online':'transferencia',entrega};
+  const gracias=new URL('gracias.html',location.href);
+  try{
+    const r=await fetch(`${API}/v1/10mil11/pedidos`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(cuerpo)});
+    const p=await r.json().catch(()=>({}));
+    if(!r.ok||!p.codigo) throw new Error(p.error||'no pudimos tomar el pedido');
+    try{ sessionStorage.setItem('10mil11:'+p.codigo,JSON.stringify({n:d.full,img:d.img,modo,forma,entrega})); }catch(_){}
+    gracias.searchParams.set('p',p.codigo);
+    if(forma==='mp'){
+      msg('Abriendo Mercado Pago…');
+      const q=await fetch(`${API}/v1/10mil11/pedidos/${encodeURIComponent(p.codigo)}/pagar`,{method:'POST',
+        headers:{'content-type':'application/json'},body:JSON.stringify({proveedor:'mercadopago',volver:new URL('gracias.html',location.href).href})});
+      const j=await q.json().catch(()=>({}));
+      if(q.ok&&j.url){ location.href=j.url; return; }
+      gracias.searchParams.set('via','mp'); gracias.searchParams.set('r','no');
+    } else gracias.searchParams.set('via','trf');
+    location.href=gracias.href;
+  }catch(err){
+    msg(`No se pudo completar (${err.message}). Probá de nuevo o escribinos por WhatsApp.`);
+  }finally{ enCurso=false; form(); }
+});
+
+desdeHash();   // al final: abrir usa todo lo de arriba
+})();
+</script>
+<script>
 // El chat: en el sitio oficial habla como 10Mil11 (no como demo) y su chat-ia.js
 // está al lado; en la vitrina es el de las demos, una carpeta más arriba.
-window.DEMO_CHAT=Object.assign({"demo":"10mil11","negocio":"10Mil11 — Lámparas con Amor","rubro":"lámparas de hierro y caireles hechas a mano","rol":"vendedor","objetivo":"producto","whatsapp":"5492214545088","color":"#d3a95e","datos":"10Mil11 · Lámparas con Amor hace lámparas de hierro y caireles a mano en La Plata: se corta, se pinta y se viste cairel por cairel en el taller. Cómo se compra: asesoría por WhatsApp (el espacio, la altura del techo, el largo de la mesa); seña del 50% por Mercado Pago o transferencia, o en efectivo si está cerca; unos 30 días de taller, a veces 20 y menos las chiquitas, y la fecha prometida se cumple ese día o antes; aviso de lista y saldo del 50%; envío por encomienda a todo el país a cargo del comprador (el costo se cotiza según la localidad) o retiro en el taller. Caireles almendra, péndulo, gotita u hojita; plaquetas de cristal de una o dos perforaciones; hierro finito, gruesito o grueso. En la página se puede reservar con seña un modelo del catálogo y armar una lámpara a medida. No inventes costos de envío, fechas exactas ni modelos que no estén en el catálogo: para eso, derivá al WhatsApp 221 454 5088."},
+window.DEMO_CHAT=Object.assign({"demo":"10mil11","negocio":"10Mil11 — Lámparas con Amor","rubro":"lámparas de hierro y caireles hechas a mano","rol":"vendedor","objetivo":"producto","whatsapp":"5492214545088","color":"#d3a95e","datos":"10Mil11 · Lámparas con Amor hace lámparas de hierro y caireles a mano en La Plata: se corta, se pinta y se viste cairel por cairel en el taller. Cómo se compra: asesoría por WhatsApp (el espacio, la altura del techo, el largo de la mesa); seña del 50% por Mercado Pago o transferencia, o en efectivo si está cerca; unos 30 días de taller, a veces 20 y menos las chiquitas, y la fecha prometida se cumple ese día o antes; aviso de lista y saldo del 50%; envío por encomienda a todo el país a cargo del comprador (el costo se cotiza según la localidad) o retiro en el taller. Caireles almendra, péndulo, gotita u hojita; plaquetas de cristal de una o dos perforaciones; hierro finito, gruesito o grueso. En la página se compra cada modelo del catálogo pagando el total o una seña del 50%, con Mercado Pago o transferencia. No inventes costos de envío, fechas exactas ni modelos que no estén en el catálogo: para eso, derivá al WhatsApp 221 454 5088."},
   MUESTRA?{}:{"demostracion":false,"firma":"10Mil11 · Lámparas con Amor","etiqueta":"La Plata"});
 (function(){var s=document.createElement('script');s.src=(MUESTRA?'../':'')+'chat-ia.js';s.defer=true;document.body.appendChild(s);})();
 </script>

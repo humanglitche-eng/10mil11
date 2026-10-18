@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gracias por tu compra · 10Mil11 — Lámparas con Amor</title>
+<meta name="robots" content="noindex">
+<!--
+  La última página de la compra (2026-10-18). Llega acá:
+  · desde Mercado Pago, con ?p=<código>&r=ok|no|pendiente (la API arma la vuelta
+    con `volver`, que solo acepta un origen de la marca);
+  · desde la ventana de compra, con ?p=<código>&via=trf (transferencia), o
+    &via=mp&r=no si Mercado Pago no se pudo abrir.
+  Lo que se muestra sale de la API (el pedido, si quedó pago, los datos para
+  transferir); sessionStorage solo aporta la foto y la entrega para el resumen.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="img/logo.jpg">
+<style>
+  :root{
+    --bg:#0b0907; --bg2:#131009; --ink:#f4ecdd; --ink-dim:rgba(244,236,221,.62);
+    --ink-mute:rgba(244,236,221,.35); --line:rgba(244,236,221,.12);
+    --gold:#d3a95e; --gold-dim:rgba(211,169,94,.55); --ok:#7cc79a; --bad:#e08b7c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:'Jost',system-ui,sans-serif;font-weight:300;line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100dvh;
+    background-image:radial-gradient(70% 50% at 50% 0%,rgba(231,166,80,.12),transparent 70%);}
+  a{color:inherit;}
+  h1,h2,h3{font-family:'Cormorant Garamond',serif;font-weight:600;}
+  .top{border-bottom:1px solid var(--line);}
+  .top-in{max-width:760px;margin:0 auto;padding:0 20px;height:68px;display:flex;align-items:center;}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
+  .brand img{width:38px;height:38px;object-fit:cover;border:1px solid var(--line);}
+  .brand b{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:20px;letter-spacing:.06em;}
+  .brand small{display:block;font-weight:400;font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-top:-3px;}
+  main{max-width:760px;margin:0 auto;padding:46px 20px 70px;}
+  .rule{display:flex;align-items:center;gap:7px;margin-bottom:20px;}
+  .rule i{width:44px;height:1px;background:var(--gold);}
+  .rule s{width:7px;height:7px;display:inline-block;}
+  .rule s:nth-child(2){background:#c9463d;} .rule s:nth-child(3){background:#2e9e63;} .rule s:nth-child(4){background:#3d7dc9;}
+  .estado{font-weight:500;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);}
+  .estado.ok{color:var(--ok);} .estado.bad{color:var(--bad);}
+  h1{font-size:clamp(2.3rem,6vw,3.4rem);line-height:1.05;margin:8px 0 10px;}
+  h1 i{color:var(--gold);}
+  .lead{font-size:17px;color:var(--ink-dim);max-width:52ch;}
+  .lead b{color:var(--ink);font-weight:500;}
+  .res{display:flex;gap:16px;align-items:center;margin:28px 0;padding:16px;border:1px solid var(--line);background:var(--bg2);}
+  .res img{width:84px;height:84px;object-fit:cover;border:1px solid var(--line);flex:none;}
+  .res .t{flex:1;min-width:0;}
+  .res .t b{display:block;font-family:'Cormorant Garamond',serif;font-size:21px;line-height:1.2;}
+  .res .t span{display:block;color:var(--ink-dim);font-size:14px;}
+  .res .m{text-align:right;font-weight:500;color:var(--gold);font-size:18px;white-space:nowrap;}
+  .res .m small{display:block;font-weight:400;font-size:11px;letter-spacing:.14em;color:var(--ink-mute);text-transform:uppercase;}
+  .caja{border:1px solid rgba(211,169,94,.35);padding:20px;margin:0 0 26px;}
+  .caja h2{font-size:24px;margin-bottom:8px;}
+  .caja p{font-size:15px;color:var(--ink-dim);margin-bottom:10px;}
+  .caja p b{color:var(--gold);font-weight:500;}
+  dl{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;font-size:15px;margin:6px 0 14px;}
+  dt{color:var(--ink-mute);font-weight:500;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding-top:4px;}
+  dd{word-break:break-all;}
+  .copiar{background:none;border:1px solid var(--line);color:var(--gold);font-family:'Jost';font-size:11px;letter-spacing:.08em;padding:2px 8px;cursor:pointer;margin-left:6px;}
+  .btn{display:inline-block;border:1px solid var(--gold);color:var(--gold);background:none;font-family:'Jost';font-weight:500;font-size:13.5px;letter-spacing:.1em;text-transform:uppercase;padding:12px 24px;text-decoration:none;cursor:pointer;text-align:center;}
+  .btn:hover{background:var(--gold);color:#0b0907;}
+  .btn.solid{background:var(--gold);color:#0b0907;}
+  .btn[disabled]{opacity:.5;cursor:default;}
+  .btns{display:flex;flex-wrap:wrap;gap:10px;}
+  .fine{font-size:13px;color:var(--ink-mute);margin-top:10px;}
+  .sig{list-style:none;counter-reset:s;display:grid;gap:14px;margin:8px 0 30px;}
+  .sig li{counter-increment:s;padding-left:44px;position:relative;font-size:15px;color:var(--ink-dim);}
+  .sig li::before{content:counter(s);position:absolute;left:0;top:-4px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:var(--gold);line-height:1;}
+  .sig li b{color:var(--ink);font-weight:500;}
+  h3.sec{font-size:22px;margin-bottom:10px;}
+  .pie{border-top:1px solid var(--line);padding-top:22px;color:var(--ink-mute);font-size:13px;}
+  .cargando{opacity:.6;}
+  @media(max-width:560px){ .res{flex-wrap:wrap;} .res .m{text-align:left;width:100%;} .btns .btn{width:100%;} }
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in"><a class="brand" href="./"><img src="img/logo.jpg" alt="Logo 10Mil11"><span><b>10Mil11</b><small>Lámparas con Amor</small></span></a></div></header>
+<main aria-live="polite">
+  <div class="rule"><i></i><s></s><s></s><s></s></div>
+  <p class="estado" id="gEst">Tu compra</p>
+  <h1 id="gT">Un momento…</h1>
+  <p class="lead" id="gL">Estamos buscando tu pedido.</p>
+  <div class="res" id="gRes" hidden></div>
+  <div class="caja" id="gCaja" hidden></div>
+  <div id="gSig" hidden>
+    <h3 class="sec">Lo que sigue</h3>
+    <ol class="sig" id="gPasos"></ol>
+  </div>
+  <div class="btns">
+    <a class="btn" href="./">Volver al catálogo</a>
+    <a class="btn" id="gWa" href="https://wa.me/5492214545088" target="_blank" rel="noopener">Escribirnos por WhatsApp</a>
+  </div>
+  <p class="pie" style="margin-top:34px">10Mil11 · Lámparas con Amor — hechas a mano en La Plata · WhatsApp 221 454 5088</p>
+</main>
+<script>
+'use strict';
+const API=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'http://127.0.0.1:3939':'https://api.hg-vl.com';
+const WA='https://wa.me/5492214545088?text=';
+const q=new URLSearchParams(location.search);
+const P=(q.get('p')||'').toUpperCase(), R=q.get('r')||'', VIA=q.get('via')||(R?'mp':'');
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=v=>'$ '+Number(v).toLocaleString('es-AR');
+const pedir=(ruta,op)=>fetch(`${API}/v1/10mil11${ruta}`,op).then(r=>r.ok?r.json():Promise.reject(r.status));
+let local={}; try{ local=JSON.parse(sessionStorage.getItem('10mil11:'+P)||'{}')||{}; }catch(_){}
+
+function decir(est,clase,titulo,lead){
+  $('gEst').textContent=est; $('gEst').className='estado'+(clase?' '+clase:'');
+  $('gT').innerHTML=titulo; $('gL').innerHTML=lead;
+}
+function wa(t){ $('gWa').href=WA+encodeURIComponent(t); }
+function pasos(sena,envio){
+  $('gPasos').innerHTML=[
+    `<b>Te escribimos por WhatsApp</b> para confirmar tu pedido y la fecha de entrega.`,
+    `<b>El taller arma tu lámpara</b>: se corta, se pinta y se viste cairel por cairel. Unos 30 días, a veces menos.`,
+    sena?`<b>Te avisamos cuando esté lista</b> y abonás el 50% restante.`:`<b>Te avisamos cuando esté lista.</b>`,
+    envio?`<b>Sale por encomienda</b> a la dirección que nos dejaste; el envío se cotiza según tu localidad.`:`<b>La retirás en el taller</b>, en La Plata: te pasamos la dirección por WhatsApp.`,
+  ].map(x=>`<li>${x}</li>`).join('');
+  $('gSig').hidden=false;
+}
+
+async function arrancar(){
+  if(!/^[A-Z0-9-]{4,20}$/.test(P)){
+    decir('Tu compra','','No encontramos tu pedido','Si ya pagaste, escribinos por WhatsApp y lo buscamos.');
+    return;
+  }
+  let p;
+  try{ p=await pedir(`/pedidos/${encodeURIComponent(P)}`); }
+  catch(e){ decir('Tu compra','bad','No pudimos cargar tu pedido',`Tu código es <b>${esc(P)}</b>. Escribinos por WhatsApp y lo vemos.`); wa(`Hola 10Mil11! Tengo el pedido ${P} y no pude ver la confirmación.`); return; }
+  const l=(p.lineas||[])[0]||{}, total=Number(p.total)/100;
+  const sena=/seña/i.test(l.etiqueta||''), envio=local.entrega?local.entrega==='envio':/Envío a /.test(p.nota||'');
+  $('gRes').innerHTML=`${local.img?`<img src="${esc(local.img)}" alt="">`:''}<div class="t"><b>${esc(l.nombre||local.n||'Tu lámpara')}</b><span>${esc(l.etiqueta||'')} · pedido ${esc(P)}</span></div><div class="m"><small>${sena?'Seña':'Total'}</small>${fmt(total)}</div>`;
+  $('gRes').hidden=false;
+  wa(`Hola 10Mil11! Hice el pedido ${P} (${l.nombre||'una lámpara'}, ${fmt(total)}).`);
+  if(p.estado==='cancelado'){ decir('Pedido cancelado','bad','Este pedido está cancelado','Si fue un error, escribinos por WhatsApp y lo armamos de nuevo.'); return; }
+
+  if(VIA==='trf') return transferencia(p,l,total,sena,envio);
+  // Mercado Pago (o se entró directo con el código): lo que manda es si la API lo dio por pago.
+  const pago=()=>pedir(`/pedidos/${encodeURIComponent(P)}/pago`).catch(()=>null);
+  let g=await pago();
+  if(g&&g.pagado) return pagado(sena,envio);
+  if(R==='no'){
+    decir('El pago no se completó','bad','No se pudo completar el pago',`Tu pedido <b>${esc(P)}</b> quedó anotado, pero el pago no se hizo. Podés probar de nuevo o escribirnos.`);
+    $('gCaja').innerHTML=`<button class="btn solid" id="gReint" type="button">Probar de nuevo con Mercado Pago</button><p class="fine" id="gReMsg"></p>`;
+    $('gCaja').hidden=false;
+    $('gReint').addEventListener('click',reintentar);
+    return;
+  }
+  if(R==='pendiente'){
+    decir('Pago pendiente','','Tu pago está en camino',`Si elegiste pagar en efectivo, acercate con el cupón a Pago Fácil o Rapipago. Apenas se acredite, te avisamos por WhatsApp. Tu pedido es <b>${esc(P)}</b>.`);
+    pasos(sena,envio); return;
+  }
+  if(R==='ok'){
+    decir('Pago aprobado','ok','¡Gracias por <i>tu compra</i>!',`Mercado Pago aprobó tu pago. Estamos terminando de confirmarlo…`);
+    pasos(sena,envio);
+    for(let i=0;i<10&&!(g&&g.pagado);i++){ await new Promise(r=>setTimeout(r,2500)); g=await pago(); }
+    if(g&&g.pagado) return pagado(sena,envio);
+    $('gL').innerHTML=`Mercado Pago aprobó tu pago y nos lo confirma en unos minutos: no hace falta que hagas nada más. Tu pedido es <b>${esc(P)}</b>.`;
+    return;
+  }
+  decir('Pedido anotado','','Tu pedido está anotado',`Tu código es <b>${esc(P)}</b>. Si todavía no lo pagaste, escribinos por WhatsApp.`);
+}
+
+function pagado(sena,envio){
+  decir('Pago recibido','ok','¡Gracias por <i>tu compra</i>!',sena
+    ?`Recibimos la seña. Tu lámpara ya está reservada: pedido <b>${esc(P)}</b>.`
+    :`Recibimos tu pago. Tu lámpara ya entra al taller: pedido <b>${esc(P)}</b>.`);
+  pasos(sena,envio);
+}
+
+async function transferencia(p,l,total,sena,envio){
+  decir(sena?'Seña por transferencia':'Pago por transferencia','','¡Gracias por <i>tu compra</i>!',`Para confirmarla, transferí <b>${fmt(total)}</b> a estos datos. Tu pedido es <b>${esc(P)}</b>.`);
+  let t={}; try{ t=(await pedir('/cobro')).transferencia||{}; }catch(_){}
+  const fila=(k,v,ver)=>v?`<dt>${k}</dt><dd><span>${esc(ver||v)}</span> <button type="button" class="copiar" data-c="${esc(v)}">copiar</button></dd>`:'';
+  $('gCaja').innerHTML=`<h2>Datos para transferir</h2>
+    <dl>${fila('Monto',String(total),fmt(total))}${fila('Alias',t.alias)}${fila('CBU',t.cbu)}${t.titular?`<dt>Titular</dt><dd>${esc(t.titular)}</dd>`:''}${t.banco?`<dt>Banco</dt><dd>${esc(t.banco)}</dd>`:''}</dl>
+    ${t.nota?`<p>${esc(t.nota)}</p>`:''}
+    <div class="btns"><button class="btn solid" id="gYa" type="button">Ya transferí</button>
+    <a class="btn" target="_blank" rel="noopener" href="${WA}${encodeURIComponent(`Hola 10Mil11! Transferí ${fmt(total)} por el pedido ${P} (${l.nombre||'lámpara'}). Te mando el comprobante.`)}">Mandar el comprobante</a></div>
+    <p class="fine" id="gYaMsg">Con la transferencia confirmada te pasamos la fecha de entrega.</p>`;
+  $('gCaja').hidden=false;
+  $('gCaja').querySelectorAll('.copiar').forEach(b=>b.addEventListener('click',()=>{
+    (navigator.clipboard?navigator.clipboard.writeText(b.dataset.c):Promise.reject()).then(()=>{b.textContent='copiado';setTimeout(()=>b.textContent='copiar',1500);}).catch(()=>{});
+  }));
+  $('gYa').addEventListener('click',async()=>{
+    $('gYa').disabled=true;
+    const ok=await fetch(`${API}/v1/10mil11/pedidos/${encodeURIComponent(P)}/transferencia`,{method:'POST'}).then(r=>r.ok).catch(()=>false);
+    $('gYaMsg').textContent=ok?'¡Gracias! Lo confirmamos apenas veamos la transferencia.':'No pudimos avisar: mandanos el comprobante por WhatsApp.';
+    if(!ok) $('gYa').disabled=false;
+  });
+  pasos(sena,envio);
+}
+
+async function reintentar(){
+  const b=$('gReint'); b.disabled=true; $('gReMsg').textContent='Abriendo Mercado Pago…';
+  const volver=new URL('gracias.html',location.href).href;
+  try{
+    const r=await fetch(`${API}/v1/10mil11/pedidos/${encodeURIComponent(P)}/pagar`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({proveedor:'mercadopago',volver})});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok&&j.url){ location.href=j.url; return; }
+    throw new Error(j.error||'no respondió');
+  }catch(e){ $('gReMsg').textContent=`No se pudo (${e.message}). Escribinos por WhatsApp y te pasamos otra forma de pago.`; b.disabled=false; }
+}
+arrancar();
+</script>
+</body>
+</html>
