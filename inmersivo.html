@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Mil11 — Experiencia inmersiva</title>
+<meta name="description" content="10Mil11 · Lámparas con Amor: versión inmersiva. Un plano de 131.072 partículas de luz de vela con un portal de video real del taller.">
+<!-- VERSIÓN INMERSIVA v2 (tier premium) — Human Glitche · Visual Lab (2026-08-22)
+     Motor UMBRAL (web/umbral/) adaptado a 10MIL11 · LÁMPARAS CON AMOR, al
+     nivel de demo-circus / demo-johndoe: GPGPU WebGL2 MRT con 131K partículas
+     corpóreas que migran entre 3 formaciones por scroll:
+       A) tipografía "10Mil11" + halo + CADENAS DE CAIRELES colgando del cielo
+       B) LA ARAÑA — cuatro pisos concéntricos de cristal con gotas cayendo
+       C) túnel/portal — la luz al final
+     El corazón es un PORTAL DE VIDEO: reels REALES del IG @lamparas_10mil11
+     (media/*.mp4, DASH reconstruido con la receta circus, 5s c/u en ciclo)
+     proyectados en un superelipse con dispersión cromática y borde prisma.
+     Paleta: llama de vela → oro viejo → crema de cristal, con DESTELLOS
+     PRISMA en un puñado de partículas (el cairel refracta arcoíris — el
+     vitraux del estudio). Fotos reales como DOM con parallax.
+     Tipografías: Cormorant Garamond + Jost. Regla de exposición UMBRAL:
+     el vacío oscuro domina — la lámpara solo existe contra la noche. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="img/logo.jpg">
+<link rel="canonical" href="https://www.10mil11.com/inmersivo.html">
+<script>document.documentElement.classList.toggle('muestra',['demos.hg-vl.com','0800webs.com'].includes(location.hostname));</script>
+<style>
+  :root{ --bg:#0a0806; --ink:#f4ecdd; --dim:rgba(244,236,221,.6); --mute:rgba(244,236,221,.34);
+         --gold:#d3a95e; --gold-dim:rgba(211,169,94,.55); --amber:#e79447; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  html,body{background:var(--bg);cursor:none;}
+  body{color:var(--ink);font-family:'Jost',system-ui,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden;scrollbar-width:none;}
+  body::-webkit-scrollbar{display:none;}
+  img{max-width:100%;display:block;} a{color:inherit;cursor:none;}
+  #gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0;background:radial-gradient(120% 90% at 50% 35%,#1c1207,#0a0806 70%);}
+  .scrim{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 90% at 50% 30%, transparent, rgba(10,8,6,.72) 92%);}
+  main{position:relative;z-index:2;}
+  .vig{position:fixed;inset:0;pointer-events:none;z-index:3;background:radial-gradient(125% 105% at 50% 45%,transparent 52%,rgba(4,3,2,.72) 100%);}
+  .grain{position:fixed;inset:0;z-index:4;pointer-events:none;opacity:.45;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");background-size:240px;}
+  .hud{position:fixed;z-index:5;font-family:'Jost',sans-serif;font-weight:500;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--mute);pointer-events:none;}
+  .hud.tl{top:20px;left:22px;} .hud.tr{top:20px;right:26px;text-align:right;}
+  .hud.bl{bottom:18px;left:22px;} .hud.br{bottom:18px;right:26px;text-align:right;}
+  .hud a{color:rgba(244,236,221,.55);text-decoration:none;pointer-events:auto;}
+  .hud a:hover{color:var(--gold);}
+  .hud .pulse-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);margin-right:7px;animation:pd 2.4s infinite;}
+  @keyframes pd{0%,100%{opacity:.25}50%{opacity:1}}
+  #prog{position:fixed;top:0;right:10px;width:2px;height:100vh;z-index:5;background:rgba(244,236,221,.07);}
+  #prog i{position:absolute;top:0;left:0;width:100%;height:0;background:linear-gradient(180deg,var(--gold),var(--amber));}
+  #cursor{position:fixed;z-index:6;width:10px;height:10px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle,rgba(255,240,210,.95),rgba(231,148,71,.4) 60%,transparent 70%);
+    box-shadow:0 0 22px 6px rgba(231,148,71,.3);transform:translate(-50%,-50%);transition:width .2s,height .2s;}
+  #cursor.down{width:26px;height:26px;}
+  @media(pointer:coarse){ html,body,a{cursor:auto;} #cursor{display:none;} }
+
+  #intro{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;transition:opacity .6s ease;}
+  #intro img{width:76px;height:76px;border-radius:50%;object-fit:cover;margin-bottom:14px;border:1px solid rgba(211,169,94,.4);filter:drop-shadow(0 0 18px rgba(231,148,71,.35));}
+  #intro .name{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(2.6rem,7vw,4.4rem);letter-spacing:.05em;}
+  #intro .tag{font-family:'Jost',sans-serif;font-weight:500;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-top:8px;}
+  #intro .cue{margin-top:46px;font-family:'Jost',sans-serif;font-weight:500;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--dim);animation:bob 2.4s ease-in-out infinite;cursor:none;}
+  @keyframes bob{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(7px);opacity:1}}
+
+  .pre{height:100vh;}
+  .s{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14vh 24px;}
+  .kin{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(2.6rem,6.5vw,5.4rem);line-height:1.08;max-width:18ch;}
+  .kin i{color:var(--gold);}
+  .statement{font-size:clamp(1.1rem,2.2vw,1.5rem);color:var(--dim);max-width:32ch;line-height:1.65;font-weight:300;}
+  .sc-h{font-family:'Jost',sans-serif;font-weight:500;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:36px;}
+  .shots{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;max-width:1100px;}
+  .shot{position:relative;width:min(300px,80vw);overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55);border:1px solid rgba(244,236,221,.14);}
+  .shot img{width:100%;aspect-ratio:4/5;object-fit:cover;}
+  .shot figcaption{position:absolute;left:0;right:0;bottom:0;padding:30px 16px 12px;background:linear-gradient(transparent,rgba(0,0,0,.82));
+    font-family:'Jost',sans-serif;font-weight:500;font-size:12px;letter-spacing:.18em;text-transform:uppercase;text-align:left;}
+  .shot figcaption small{display:block;font-weight:300;font-size:11px;letter-spacing:.03em;color:var(--dim);text-transform:none;margin-top:2px;}
+  .finale h2{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(2.1rem,4.6vw,3.4rem);margin-bottom:30px;}
+  .finale h2 i{color:var(--gold);}
+  .enter{display:inline-block;border:1px solid var(--gold);color:var(--gold);font-family:'Jost',sans-serif;font-weight:500;font-size:13px;
+    letter-spacing:.18em;text-transform:uppercase;padding:15px 42px;text-decoration:none;transition:all .25s;}
+  .enter:hover{background:var(--gold);color:#0a0806;}
+  .demo-note{margin-top:40px;font-size:11px;color:var(--mute);max-width:54ch;line-height:1.6;}
+  .demo-tag{position:fixed;left:16px;bottom:44px;z-index:5;font-size:10.5px;color:var(--mute);background:rgba(10,8,6,.5);border:1px solid rgba(244,236,221,.12);padding:5px 11px;pointer-events:none;}
+  .rv{opacity:0;transform:translateY(40px);transition:opacity 1s ease,transform 1s cubic-bezier(.16,1,.3,1);}
+  .rv.in{opacity:1;transform:none;}
+  @media(prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none;transition:none;} #intro .cue{animation:none;} }
+  html:not(.muestra) .demo-tag,html:not(.muestra) .demo-note{display:none;}
+</style></head><body>
+
+<canvas id="gl"></canvas>
+<div class="scrim"></div>
+
+<div id="intro">
+  <img src="img/logo.jpg" alt="Logo 10Mil11">
+  <div class="name">10Mil11</div>
+  <div class="tag">Lámparas con amor · La Plata</div>
+  <div class="cue" onclick="document.getElementById('h1s').scrollIntoView({behavior:'smooth'})">Entrá · deslizá ↓</div>
+</div>
+
+<main>
+  <div class="pre" aria-hidden="true"></div>
+  <section class="s" id="h1s"><h1 class="kin rv">Una lámpara no ilumina una casa. La <i>enciende por dentro.</i></h1></section>
+  <section class="s"><p class="statement rv">Lo que flota en el fondo no es un render: son las lámparas reales del taller, filmadas entre los árboles de su jardín en La Plata.</p></section>
+  <section class="s">
+    <div class="sc-h rv">El material, en serio</div>
+    <div class="shots">
+      <figure class="shot rv" data-par="0.10"><img src="img/estudio.jpg" alt="El estudio con vitraux de colores y lámparas de caireles" loading="lazy"><figcaption>El estudio<small>Vitraux y cristal — la casa de las lámparas</small></figcaption></figure>
+      <figure class="shot rv" data-par="0.16"><img src="img/cuadrada.jpg" alt="Lámpara cuadrada de varillas de vidrio en el jardín" loading="lazy"><figcaption>La cuadrada<small>Varillas de vidrio, filo moderno</small></figcaption></figure>
+      <figure class="shot rv" data-par="0.22"><img src="img/vitraux-rect.jpg" alt="Lámpara rectangular de un metro entre vitraux" loading="lazy"><figcaption>La rectangular<small>Un metro de caireles sobre la mesa</small></figcaption></figure>
+    </div>
+  </section>
+  <section class="s">
+    <div class="sc-h rv">De la lámpara de pisos al velador</div>
+    <div class="shots">
+      <figure class="shot rv" data-par="0.10"><img src="img/veladores.jpg" alt="Par de veladores de caireles" loading="lazy"><figcaption>Los veladores<small>La misma luz, de mesa</small></figcaption></figure>
+      <figure class="shot rv" data-par="0.16"><img src="img/comedor.jpg" alt="Comedor con lámpara rectangular instalada" loading="lazy"><figcaption>En tu casa<small>Así queda puesta</small></figcaption></figure>
+      <figure class="shot rv" data-par="0.22"><img src="img/drum-vitraux.jpg" alt="Lámpara de tambor con vitraux de fondo" loading="lazy"><figcaption>El tambor<small>Hierro y vidrio, a mano</small></figcaption></figure>
+    </div>
+  </section>
+  <section class="s finale">
+    <h2 class="rv">Alegrá tu casa, <i>alegrá tu vida.</i></h2>
+    <a class="enter rv" href="index.html#catalogo">Encender el catálogo</a>
+    <p class="demo-note rv">Versión inmersiva — experiencia premium de Human Glitche sobre su motor UMBRAL: 131.072 partículas de luz de vela y un portal de video con los reels reales del Instagram de 10Mil11. El catálogo completo, a un clic.</p>
+  </section>
+</main>
+
+<div class="vig"></div><div class="grain"></div>
+<div class="hud tl"><span class="pulse-dot"></span>10MIL11 · INMERSIVO</div>
+<div class="hud tr" id="phaseLbl">01 · EL TALLER</div>
+<div class="hud bl">SCROLLEÁ — LA LÁMPARA MUTA · MOVETE — EL CRISTAL TE ESQUIVA · CLICK — DESTELLO</div>
+<div class="hud br"><a href="index.html">EL CATÁLOGO ↗</a></div>
+<div id="prog"><i></i></div>
+<div id="cursor"></div>
+<span class="demo-tag">DEMO · inmersivo · Human Glitche</span>
+
+<script>
+'use strict';
+(async function(){
+const cv=document.getElementById('gl');
+const gl=cv.getContext('webgl2',{antialias:false,alpha:true,premultipliedAlpha:false});
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+// sin WebGL2 la página degrada al gradiente del canvas con el DOM completo
+if(!gl||!gl.getExtension('EXT_color_buffer_float')) return;
+
+function sh(t,s){const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);
+ if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o)+'\n'+s);return o;}
+function prog(v,f){const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,v));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,f));
+ gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));return p;}
+
+const NOISE=`
+vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x,289.0);}
+vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
+float snoise(vec3 v){const vec2 C=vec2(1.0/6.0,1.0/3.0);const vec4 D=vec4(0.0,0.5,1.0,2.0);
+ vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);
+ vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.0-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);
+ vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;i=mod(i,289.0);
+ vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));
+ float n_=1.0/7.0;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.0*floor(p*ns.z*ns.z);
+ vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.0*x_);vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.0-abs(x)-abs(y);
+ vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);vec4 s0=floor(b0)*2.0+1.0;vec4 s1=floor(b1)*2.0+1.0;vec4 sh2=-step(h,vec4(0.0));
+ vec4 a0=b0.xzyw+s0.xzyw*sh2.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh2.zzww;
+ vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
+ vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
+ vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);m=m*m;
+ return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}
+vec3 snoiseVec3(vec3 p){return vec3(snoise(p),snoise(p+vec3(123.4,45.6,78.9)),snoise(p+vec3(-9.1,32.7,11.3)));}
+vec3 curlNoise(vec3 p){const float e=0.1;vec3 dx=vec3(e,0.,0.),dy=vec3(0.,e,0.),dz=vec3(0.,0.,e);
+ vec3 px0=snoiseVec3(p-dx),px1=snoiseVec3(p+dx),py0=snoiseVec3(p-dy),py1=snoiseVec3(p+dy),pz0=snoiseVec3(p-dz),pz1=snoiseVec3(p+dz);
+ float x=(py1.z-py0.z)-(pz1.y-pz0.y),y=(pz1.x-pz0.x)-(px1.z-px0.z),z=(px1.y-px0.y)-(py1.x-py0.x);
+ return normalize(vec3(x,y,z)/(2.0*e));}`;
+
+const QUAD_VS=`#version 300 es
+in vec2 a;out vec2 uv;void main(){uv=a*0.5+0.5;gl_Position=vec4(a,0.,1.);}`;
+
+const SIM_FS=`#version 300 es
+precision highp float;in vec2 uv;
+layout(location=0) out vec4 oPos;layout(location=1) out vec4 oVel;
+uniform sampler2D uPos,uVel,uHomeA,uHomeB,uHomeC,uAttr;
+uniform float uTime,uDt,uIntro,uAspect,uPhase,uSpin;
+uniform vec3 uMouse;uniform vec4 uShock;
+${NOISE}
+void main(){
+ vec3 hA=texture(uHomeA,uv).rgb, hB=texture(uHomeB,uv).rgb, hC=texture(uHomeC,uv).rgb;
+ vec3 home = uPhase<1.0 ? mix(hA,hB,smoothstep(0.0,1.0,uPhase)) : mix(hB,hC,smoothstep(1.0,2.0,uPhase));
+ vec4 at=texture(uAttr,uv);
+ vec3 pos=texture(uPos,uv).rgb;
+ vec3 vel=texture(uVel,uv).rgb;
+ vec3 spring=(home-pos)*mix(0.6,5.0,uIntro);
+ float idle=mix(0.35,0.12,at.b);
+ vec3 breathe=curlNoise(home*2.5+uTime*0.16)*idle;
+ vec2 dp=pos.xy-uMouse.xy; dp.x*=uAspect;
+ float d2=dot(dp,dp);
+ vec3 mForce=vec3(normalize(dp+1e-4),0.4)*(uMouse.z*exp(-d2*3.2)*9.0);
+ vec2 sp2=pos.xy-uShock.xy; sp2.x*=uAspect;
+ float sd=length(sp2);
+ float ring=exp(-pow((sd-uShock.z*1.6)*4.0,2.0));
+ vec3 sForce=vec3(normalize(sp2+1e-4),0.5)*ring*uShock.w*14.0;
+ float disp=clamp(length(pos-home)*1.8,0.0,1.0);
+ vec3 turb=curlNoise(pos*2.0+uTime*0.5)*disp*3.4;
+ // el scroll hace girar la araña — los caireles orbitan el centro
+ vec2 rc=pos.xy-vec2(0.0,0.14);
+ vec2 tang=normalize(vec2(-rc.y,rc.x)+1e-4);
+ vec3 swirl=vec3(tang,0.0)*uSpin*exp(-dot(rc,rc)*0.35)*2.4;
+ vel+=(spring+breathe+mForce+sForce+turb+swirl)*uDt;
+ vel*=0.92;
+ pos+=vel*uDt;
+ oPos=vec4(pos,disp);
+ oVel=vec4(vel,0.0);
+}`;
+
+// paleta: llama de vela → oro viejo → crema de cristal, con destellos prisma
+const DRAW_VS=`#version 300 es
+precision highp float;
+in float aIndex;
+out vec3 vCol;out float vDisp;out float vSoft;out float vSpark;
+uniform sampler2D uPos,uAttr;uniform vec2 uTexSize;
+uniform float uAspect,uDPR,uTime,uIntro;uniform vec2 uPar;
+void main(){
+ vec2 t=vec2(mod(aIndex,uTexSize.x),floor(aIndex/uTexSize.x))/uTexSize;
+ vec4 s=texture(uPos,t);
+ vec4 at=texture(uAttr,t);
+ vDisp=s.a;
+ vec3 p=s.rgb;
+ float z=clamp(p.z,0.0,1.0);
+ float persp=1.0/(1.0+z*0.85);
+ vec2 cam=uPar*(z-0.35)*0.16;
+ vec2 sp=(p.xy+cam)*persp; sp.x/=uAspect;
+ gl_Position=vec4(sp*0.93,0.,1.);
+ float near=1.0-z;
+ gl_PointSize=uDPR*at.r*mix(1.1,4.6,near)*persp*(1.0+vDisp*0.7);
+ vSoft=mix(0.15,0.85,near*step(3.0,at.r));
+ float hue=fract(at.g+uTime*0.012);
+ vec3 c;
+ if(at.b>0.9){ c=mix(vec3(1.0,0.97,0.88),vec3(0.94,0.80,0.52),at.g); }        // tipografía: crema/oro
+ else if(at.b>0.55){                                                          // halo: tornasol cálido
+   float a3=fract(at.a+uTime*0.05);
+   vec3 rain=0.5+0.5*cos(6.2832*(a3+vec3(0.0,0.33,0.67)));
+   c=mix(vec3(1.0,0.86,0.55),rain,0.4)*1.1;
+ } else {                                                                     // cuerpo: vela → cobre → oro → cristal
+   if(hue<0.40)      c=mix(vec3(0.32,0.13,0.03),vec3(0.88,0.48,0.12),hue/0.40);
+   else if(hue<0.66) c=mix(vec3(0.62,0.28,0.08),vec3(0.96,0.60,0.26),(hue-0.40)/0.26);
+   else if(hue<0.85) c=mix(vec3(0.76,0.55,0.20),vec3(1.0,0.86,0.48),(hue-0.66)/0.19);
+   else              c=mix(vec3(0.84,0.74,0.55),vec3(1.0,0.97,0.86),(hue-0.85)/0.15);
+   // el cairel refracta: un puñado de partículas titila en arcoíris (vitraux)
+   float pr=step(0.955,fract(at.a*23.0));
+   if(pr>0.5){
+     vec3 rain=0.5+0.5*cos(6.2832*(fract(at.a*7.0)+uTime*0.10+vec3(0.0,0.33,0.67)));
+     c=mix(c,rain*1.15,0.72*(0.4+0.6*sin(uTime*2.2+at.a*50.0)*0.5+0.3));
+   }
+ }
+ float band=smoothstep(0.20,0.0,abs((p.y*0.5+0.5)-fract(uTime*0.045)));
+ float beat=smoothstep(0.7,0.0,length(p.xy))*(0.5+0.5*sin(uTime*0.9));
+ float glow=0.20+0.42*band+0.24*beat+near*0.16+vDisp*1.2;
+ float dustDim=mix(0.30,1.0,step(0.15,at.b));
+ glow*=dustDim;
+ glow*=mix(1.0,1.5,step(0.9,at.b));
+ glow*=mix(1.0,1.25,step(0.25,at.b)*step(at.b,0.5));
+ vCol=c*glow*uIntro;
+ vSpark=step(0.985,fract(at.a*57.0))*(0.5+0.5*sin(uTime*3.0+at.a*40.0));
+}`;
+const DRAW_FS=`#version 300 es
+precision highp float;
+in vec3 vCol;in float vDisp;in float vSoft;in float vSpark;out vec4 o;
+void main(){
+ vec2 d=(gl_PointCoord-0.5)*2.0;
+ float r2=dot(d,d); if(r2>1.0) discard;
+ float nz=sqrt(max(1.0-r2,0.0));
+ vec3 n=vec3(d.x,-d.y,nz);
+ vec3 L=normalize(vec3(-0.45,0.55,0.72));
+ float diff=0.38+0.62*max(dot(n,L),0.0);
+ float spec=pow(max(dot(reflect(-L,n),vec3(0.,0.,1.)),0.0),26.0)*0.30;
+ float edge=smoothstep(1.0,mix(0.55,0.05,vSoft),r2);
+ vec3 c=vCol*diff+vec3(1.0)*spec*(1.0-vSoft);
+ c+=vCol*vSpark*0.9;
+ float a=edge*mix(0.42,0.15,vSoft);
+ o=vec4(c*a,a);
+}`;
+
+// portal de video: superelipse con dispersión cromática y borde prisma
+const PORTAL_VS=`#version 300 es
+precision highp float;
+in vec2 a;
+uniform float uAspect;uniform vec2 uPar,uSize;
+out vec2 vq;
+void main(){
+ vq=a;
+ vec2 p=vec2(0.0,0.14)+a*uSize+uPar*(-0.21)*0.16;
+ p.x/=uAspect;
+ gl_Position=vec4(p*0.93,0.,1.);
+}`;
+const PORTAL_FS=`#version 300 es
+precision highp float;
+in vec2 vq;out vec4 o;
+uniform sampler2D uVid;
+uniform float uTime,uAlpha,uSpin,uVidAspect,uPortalAspect,uIntro;
+vec3 pal(float t){return 0.5+0.5*cos(6.2832*(t+vec3(0.0,0.33,0.67)));}
+void main(){
+ vec2 q=abs(vq);
+ float m=pow(q.x,3.0)+pow(q.y,3.0);
+ float mask=1.0-smoothstep(0.86,1.0,m);
+ if(mask<=0.002) discard;
+ float edge=smoothstep(0.35,1.0,m);
+ vec2 cuv=vq*0.5;
+ float pa=uPortalAspect, va=uVidAspect;
+ if(va>pa){ cuv.x*=pa/va; } else { cuv.y*=va/pa; }
+ cuv+=0.5;
+ float ab=0.004+0.030*edge+0.010*min(abs(uSpin),1.5);
+ vec2 dir=normalize(vq+vec2(1e-4));
+ vec3 col;
+ col.r=texture(uVid,cuv+dir*ab).r;
+ col.g=texture(uVid,cuv).g;
+ col.b=texture(uVid,cuv-dir*ab).b;
+ // borde: prisma sobre oro — la luz que cruza un cairel se abre en arcoíris
+ float rim=smoothstep(0.66,0.98,m);
+ vec3 film=mix(vec3(1.0,0.86,0.5), pal(m*1.6+uTime*0.06+vq.y*0.35), 0.62);
+ col+=film*rim*0.9;
+ col*=0.60+0.40*(1.0-edge*0.45);
+ float a=uAlpha*mask*uIntro;
+ o=vec4(col*a,a);
+}`;
+
+const simP=prog(QUAD_VS,SIM_FS), drawP=prog(DRAW_VS,DRAW_FS), portalP=prog(PORTAL_VS,PORTAL_FS);
+const quad=gl.createVertexArray();gl.bindVertexArray(quad);
+const qb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,qb);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+const qa=gl.getAttribLocation(simP,'a');gl.enableVertexAttribArray(qa);gl.vertexAttribPointer(qa,2,gl.FLOAT,false,0,0);
+gl.bindVertexArray(null);
+const pQuad=gl.createVertexArray();gl.bindVertexArray(pQuad);
+const pqb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,pqb);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1, 1,-1, -1,1,  1,-1, 1,1, -1,1]),gl.STATIC_DRAW);
+const pqa=gl.getAttribLocation(portalP,'a');gl.enableVertexAttribArray(pqa);gl.vertexAttribPointer(pqa,2,gl.FLOAT,false,0,0);
+gl.bindVertexArray(null);
+
+// el material real: los reels del taller en ciclo (5s completos cada uno)
+const PLAYLIST=['media/cristal-lluvia.mp4','media/caireles-gota.mp4','media/vitraux-arana.mp4',
+ 'media/cristal-denso.mp4','media/taller-manos.mp4','media/rosa-jardin.mp4',
+ 'media/rayo-cuadrada.mp4','media/jardin-tiers.mp4','media/pisos-interior.mp4'];
+let vidI=0, vidReady=false, vidAspect=0.5621;
+const video=document.createElement('video');
+video.muted=true; video.playsInline=true; video.preload='auto'; video.crossOrigin='anonymous';
+function nextVideo(){
+ video.src=PLAYLIST[vidI%PLAYLIST.length]; vidI++;
+ video.play().catch(()=>{});
+}
+video.addEventListener('ended',nextVideo);
+video.addEventListener('loadedmetadata',()=>{ vidAspect=video.videoWidth/video.videoHeight; });
+video.addEventListener('playing',()=>{ vidReady=true; });
+if(!reduced) nextVideo();
+const kick=()=>{ if(video.paused && !reduced) video.play().catch(()=>{}); };
+addEventListener('pointerdown',kick); addEventListener('scroll',kick,{passive:true});
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) kick(); });
+
+const vidTex=gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D,vidTex);
+gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([18,12,6,255]));
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+if(reduced){ const im=new Image(); im.onload=()=>{ gl.bindTexture(gl.TEXTURE_2D,vidTex);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,im);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+  vidAspect=im.naturalWidth/im.naturalHeight; vidReady=true; };
+ im.src='media/cristal-lluvia.jpg'; }
+
+// ════════ construcción de las 3 formaciones ════════
+const TW=512, TH=256, COUNT=TW*TH;
+const homeA=new Float32Array(COUNT*4), homeB=new Float32Array(COUNT*4), homeC=new Float32Array(COUNT*4),
+      attr=new Float32Array(COUNT*4), zero=new Float32Array(COUNT*4);
+const rnd=Math.random, gauss=()=>{let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(6.2832*v);};
+let k=0;
+function put(x,y,z,size,hue,type,phase){
+ if(k>=COUNT)return;
+ homeA[k*4]=x;homeA[k*4+1]=y;homeA[k*4+2]=z;homeA[k*4+3]=1;
+ attr[k*4]=size;attr[k*4+1]=hue;attr[k*4+2]=type;attr[k*4+3]=phase;
+ k++;
+}
+function bodySize(){ const r=rnd(); return r<0.93 ? 0.45+rnd()*1.0 : 1.8+rnd()*2.2; }
+
+// FORMACIÓN A — el taller: tipografía 10Mil11 + halo + cadenas de caireles + polvo
+try{ await document.fonts.load('700 240px "Cormorant Garamond"'); }catch(e){}
+(function buildText(){
+ const W=1700,H=380, oc=document.createElement('canvas');oc.width=W;oc.height=H;
+ const c2=oc.getContext('2d');
+ c2.fillStyle='#000';c2.fillRect(0,0,W,H);
+ c2.fillStyle='#fff';c2.font='700 240px "Cormorant Garamond", Georgia, serif';
+ c2.textAlign='center';c2.textBaseline='middle';
+ c2.fillText('10Mil11',W/2,H/2+14);
+ const px=c2.getImageData(0,0,W,H).data;
+ const TARGET=30000; const step=Math.max(1,Math.floor(Math.sqrt(W*H/TARGET*1.9)));
+ for(let j=0;j<H;j+=step)for(let i=0;i<W;i+=step){
+  if(px[(j*W+i)*4]>110){
+   const x=(i/W*2-1)*1.24, y=-(j/H*2-1)*0.278-0.48;
+   put(x+gauss()*0.0015,y+gauss()*0.0015,0.22+rnd()*0.10,0.7+rnd()*0.9,rnd(),1.0,rnd());
+  }
+ }
+})();
+(function buildHalo(){          // anillo orbital fino alrededor del portal
+ const N=9000, cx=0, cy=0.14;
+ for(let i=0;i<N;i++){
+  const a=rnd()*6.2832, rr=0.58+gauss()*0.006;
+  put(cx+Math.cos(a)*rr, cy+Math.sin(a)*rr*0.94+Math.sin(a*2.0)*0.02, 0.3+rnd()*0.12, 0.6+rnd()*0.8, rnd(), 0.66, a/6.2832);
+ }
+})();
+(function buildStrands(){       // cadenas de caireles colgando del cielo del taller
+ const chains=[];
+ for(let c=0;c<16;c++){
+  const sx=(c/15*2-1)*1.32+gauss()*0.04;
+  if(Math.abs(sx)<0.72&&c%2===0) continue;               // despejar el centro (portal)
+  chains.push([sx, 0.55+rnd()*0.75, 0.08+rnd()*0.75, rnd()*6.2832]); // x, largo, z, fase
+ }
+ const N=72000;
+ for(let i=0;i<N;i++){
+  const ch=chains[(rnd()*chains.length)|0];
+  const t=rnd();
+  const y=1.30-t*ch[1];
+  if(rnd()<0.24){                                        // la gota al final de la cadena
+   const ty=1.30-ch[1];
+   put(ch[0]+gauss()*0.035, ty+gauss()*0.045-0.03, Math.min(0.98,Math.max(0.02,ch[2]+gauss()*0.10)), bodySize(), rnd(), 0.33, rnd());
+  }else{                                                 // el hilo, con un vaivén suave
+   const wob=Math.sin(y*3.4+ch[3])*0.028*t;
+   put(ch[0]+wob+gauss()*0.008, y, Math.min(0.98,Math.max(0.02,ch[2]+gauss()*0.14)), bodySize()*0.8, rnd(), 0.33, rnd());
+  }
+ }
+})();
+while(k<COUNT){ put((rnd()*2-1)*1.45, rnd()*2.6-1.3, rnd(), bodySize(), rnd(), 0.0, rnd()); }
+
+// FORMACIÓN B — la araña: cuatro pisos concéntricos con gotas cayendo
+for(let i=0;i<COUNT;i++){
+ const tier=[[1.06,0.60,0.30],[0.82,0.38,0.26],[0.58,0.16,0.22],[0.34,-0.04,0.18]][(rnd()*4)|0]; // R, y, largo de gota
+ const a=rnd()*6.2832;
+ const drop=Math.pow(rnd(),1.6)*tier[2];                  // la mayoría queda en el aro
+ const R=tier[0]+gauss()*0.018;
+ homeB[i*4]  =Math.cos(a)*R;
+ homeB[i*4+1]=0.14+tier[1]*0.9-drop+Math.sin(a*6.0)*0.012;
+ homeB[i*4+2]=Math.min(0.98,Math.max(0.02,0.5+Math.sin(a)*0.34+gauss()*0.05));
+ homeB[i*4+3]=1;
+}
+// FORMACIÓN C — túnel: anillos que convergen a la luz (el portal es la lámpara)
+for(let i=0;i<COUNT;i++){
+ const t=Math.pow(rnd(),0.8);
+ const a=rnd()*6.2832;
+ const R=(1.35-(1.35-0.30)*t)+gauss()*0.045;
+ homeC[i*4]  =Math.cos(a)*R*1.15;
+ homeC[i*4+1]=0.14+Math.sin(a)*R;
+ homeC[i*4+2]=Math.min(0.98,t*0.97+0.02);
+ homeC[i*4+3]=1;
+}
+
+function makeTex(data){const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
+ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,TW,TH,0,gl.RGBA,gl.FLOAT,data);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return t;}
+const scatter=new Float32Array(COUNT*4);
+for(let i=0;i<COUNT;i++){
+ const a=rnd()*6.2832, b=Math.acos(rnd()*2-1), R=1.8+rnd()*1.4;
+ scatter[i*4]=Math.sin(b)*Math.cos(a)*R; scatter[i*4+1]=Math.sin(b)*Math.sin(a)*R*0.7; scatter[i*4+2]=rnd(); scatter[i*4+3]=0;
+}
+const homeTexA=makeTex(homeA), homeTexB=makeTex(homeB), homeTexC=makeTex(homeC), attrTex=makeTex(attr);
+const posTex=[makeTex(reduced?homeA:scatter),makeTex(reduced?homeA:scatter)];
+const velTex=[makeTex(zero),makeTex(zero)];
+const fbo=[gl.createFramebuffer(),gl.createFramebuffer()];
+for(let s=0;s<2;s++){gl.bindFramebuffer(gl.FRAMEBUFFER,fbo[s]);
+ gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,posTex[s],0);
+ gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT1,gl.TEXTURE_2D,velTex[s],0);}
+gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+const idx=new Float32Array(COUNT);for(let i=0;i<COUNT;i++)idx[i]=i;
+const drawVAO=gl.createVertexArray();gl.bindVertexArray(drawVAO);
+const ib=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,ib);gl.bufferData(gl.ARRAY_BUFFER,idx,gl.STATIC_DRAW);
+const il=gl.getAttribLocation(drawP,'aIndex');gl.enableVertexAttribArray(il);gl.vertexAttribPointer(il,1,gl.FLOAT,false,0,0);
+gl.bindVertexArray(null);
+
+// ════════ loop ════════
+const U=n=>gl.getUniformLocation(simP,n), D=n=>gl.getUniformLocation(drawP,n), P=n=>gl.getUniformLocation(portalP,n);
+const DPR=Math.min(devicePixelRatio||1,1.7);
+let cur=0, aspect=1, t0=performance.now(), last=t0;
+const mouse={x:9,y:9,f:0}, par={x:0,y:0,tx:0,ty:0};
+let shock={x:0,y:0,t:-9,w:0};
+let sS=0, spin=0;
+const progBar=document.querySelector('#prog i'), phaseLbl=document.getElementById('phaseLbl');
+const intro=document.getElementById('intro');
+let lastPhaseName='';
+function resize(){cv.width=innerWidth*DPR;cv.height=innerHeight*DPR;aspect=cv.width/cv.height;}
+addEventListener('resize',resize);resize();
+function scrollProg(){const sc=document.scrollingElement;const m=sc.scrollHeight-innerHeight;return m>0?sc.scrollTop/m:0;}
+
+function frame(now){
+ const dt=Math.min((now-last)/1000,0.033);last=now;const time=(now-t0)/1000;
+ const introT=reduced?1:Math.min(1,Math.max(0,(time-0.3)/3.2));
+ const introE=introT*introT*(3-2*introT);
+ par.x+=(par.tx-par.x)*0.05; par.y+=(par.ty-par.y)*0.05;
+ const sRaw=scrollProg();
+ const sPrev=sS;
+ sS+=(sRaw-sS)*0.07;
+ spin=spin*0.9 + ((sS-sPrev)/Math.max(dt,1e-3))*0.1;
+ const spinF=Math.max(-3,Math.min(3,spin*22));
+ const phase=sS*2.0;
+ progBar.style.height=(sRaw*100)+'%';
+ const pname = phase<0.66?'01 · EL TALLER' : phase<1.5?'02 · LA LÁMPARA' : '03 · LA LUZ';
+ if(pname!==lastPhaseName){ phaseLbl.textContent=pname; lastPhaseName=pname; }
+ const sAge=time-shock.t;
+ if(!reduced && vidReady && video.readyState>=2){
+  gl.bindTexture(gl.TEXTURE_2D,vidTex);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,video);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+ }
+ // sim
+ gl.useProgram(simP);gl.bindVertexArray(quad);
+ gl.bindFramebuffer(gl.FRAMEBUFFER,fbo[1-cur]);gl.viewport(0,0,TW,TH);
+ gl.drawBuffers([gl.COLOR_ATTACHMENT0,gl.COLOR_ATTACHMENT1]);
+ gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,posTex[cur]);gl.uniform1i(U('uPos'),0);
+ gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,velTex[cur]);gl.uniform1i(U('uVel'),1);
+ gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,homeTexA);gl.uniform1i(U('uHomeA'),2);
+ gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,homeTexB);gl.uniform1i(U('uHomeB'),3);
+ gl.activeTexture(gl.TEXTURE4);gl.bindTexture(gl.TEXTURE_2D,homeTexC);gl.uniform1i(U('uHomeC'),4);
+ gl.activeTexture(gl.TEXTURE5);gl.bindTexture(gl.TEXTURE_2D,attrTex);gl.uniform1i(U('uAttr'),5);
+ gl.uniform1f(U('uTime'),time);gl.uniform1f(U('uDt'),dt);gl.uniform1f(U('uIntro'),introE);gl.uniform1f(U('uAspect'),aspect);
+ gl.uniform1f(U('uPhase'),phase);gl.uniform1f(U('uSpin'),spinF);
+ gl.uniform3f(U('uMouse'),mouse.x,mouse.y,mouse.f);
+ gl.uniform4f(U('uShock'),shock.x,shock.y,Math.max(0,sAge),shock.w*Math.exp(-sAge*1.8));
+ gl.drawArrays(gl.TRIANGLES,0,3);cur=1-cur;
+ // portal
+ gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.drawBuffers([gl.BACK]);gl.viewport(0,0,cv.width,cv.height);
+ gl.clearColor(0.02,0.013,0.006,1);gl.clear(gl.COLOR_BUFFER_BIT);
+ gl.enable(gl.BLEND);
+ const pScale=0.30+0.14*Math.min(1,Math.max(0,phase))+0.22*Math.min(1,Math.max(0,phase-1));
+ const pAlpha=(0.30+0.30*Math.min(1,Math.max(0,phase))+0.38*Math.min(1,Math.max(0,phase-1)));
+ const sizeY=pScale, sizeX=pScale*0.76;
+ gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+ gl.useProgram(portalP);gl.bindVertexArray(pQuad);
+ gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,vidTex);gl.uniform1i(P('uVid'),0);
+ gl.uniform1f(P('uAspect'),aspect);gl.uniform2f(P('uPar'),par.x,par.y);gl.uniform2f(P('uSize'),sizeX,sizeY);
+ gl.uniform1f(P('uTime'),time);gl.uniform1f(P('uAlpha'),pAlpha);gl.uniform1f(P('uSpin'),spinF);
+ gl.uniform1f(P('uVidAspect'),vidAspect);gl.uniform1f(P('uPortalAspect'),sizeX/sizeY);
+ gl.uniform1f(P('uIntro'),introE);
+ gl.drawArrays(gl.TRIANGLES,0,6);
+ // partículas
+ gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
+ gl.useProgram(drawP);gl.bindVertexArray(drawVAO);
+ gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,posTex[cur]);gl.uniform1i(D('uPos'),0);
+ gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,attrTex);gl.uniform1i(D('uAttr'),1);
+ gl.uniform2f(D('uTexSize'),TW,TH);gl.uniform1f(D('uAspect'),aspect);gl.uniform1f(D('uDPR'),DPR);
+ gl.uniform1f(D('uTime'),time);gl.uniform1f(D('uIntro'),introE);gl.uniform2f(D('uPar'),par.x,par.y);
+ gl.drawArrays(gl.POINTS,0,COUNT);
+ gl.disable(gl.BLEND);
+ mouse.f*=0.9;
+ requestAnimationFrame(frame);
+}
+
+// ════════ input ════════
+const cursor=document.getElementById('cursor');
+function toWorld(cx,cy){
+ const nx=cx/innerWidth*2-1, ny=1-cy/innerHeight*2;
+ mouse.x=nx*aspect/0.93; mouse.y=ny/0.93;
+ par.tx=nx; par.ty=ny;
+}
+addEventListener('mousemove',e=>{ toWorld(e.clientX,e.clientY); mouse.f=1.0;
+ cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px'; });
+addEventListener('pointerdown',e=>{ toWorld(e.clientX,e.clientY);
+ shock={x:mouse.x,y:mouse.y,t:(performance.now()-t0)/1000,w:1}; cursor.classList.add('down'); });
+addEventListener('pointerup',()=>cursor.classList.remove('down'));
+addEventListener('touchmove',e=>{const t=e.touches[0];if(t){toWorld(t.clientX,t.clientY);mouse.f=1.15;}},{passive:true});
+
+addEventListener('scroll',()=>{
+ const y=scrollY;
+ intro.style.opacity=Math.max(0,1-y/(innerHeight*.6));
+ intro.style.pointerEvents=y>40?'none':'auto';
+ document.querySelectorAll('.shot').forEach(s=>{
+  const r=s.getBoundingClientRect(); const c=(r.top+r.height/2-innerHeight/2);
+  s.style.transform='translateY('+(c*-parseFloat(s.dataset.par))+'px)';
+ });
+},{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.2});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+requestAnimationFrame(frame);
+})();
+</script>
+</body></html>

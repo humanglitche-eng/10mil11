@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Mil11 — Lámparas con Amor · Lámparas de hierro y caireles hechas a mano · La Plata</title>
+<meta name="description" content="Lámparas de hierro y caireles hechas a mano en La Plata. Catálogo encendido de 10Mil11 — Lámparas con Amor: de 1 a 4 pisos, rectangulares, veladores y a tu medida. Seña del 50%, lista en unos 30 días, envíos a todo el país.">
+<!--
+  SITIO OFICIAL de 10Mil11 · Lámparas con Amor (La Plata): www.10mil11.com, por
+  GitHub Pages (humanglitche-eng/10mil11) desde el 2026-10-18. Hecho por Human
+  Glitche · Visual Lab; nació como demo de venta el 2026-08-22.
+  La MISMA página se sirve como vitrina en demos.hg-vl.com/demo-10mil11: ahí
+  `MUESTRA` es true, se ve la etiqueta de demo y la reserva manda al sitio
+  oficial (la API no le acepta escrituras a una vitrina).
+  CONCEPTO: "catálogo inmersivo" — la página está a oscuras y la luz la ponés
+  vos: el cursor es una linterna cálida y cada lámpara del catálogo está
+  APAGADA hasta que la tocás (hover/tap la enciende con su halo).
+  MATERIAL 100% REAL, capturado con Zeta Lens (2026-08-22):
+  - ~/Downloads/zeta-lens/lamparas10mil11conamor → IG @lamparas_10mil11
+    (66 reels DASH reconstruidos con la receta circus: init ftyp + fragmentos
+    por tfdt; 12 re-encodeados a 480x854 crf31 sin audio en media/).
+  - ~/Downloads/zeta-lens/lamparasconamor10mil11 → fotos de producto de la
+    tienda oficial (lamparasconamor10mil11.mitiendanube.com) + logo real.
+  CATÁLOGO = la tienda Nube tal cual (catalogo.js + img/tienda/, generados por
+  herramientas/tiendanube-catalogo/relevar.py del vault): cada producto con SU
+  foto, nombre, precio y categorías. Hasta el 18/10 las fotos estaban asignadas a
+  ojo y casi ninguna correspondía a su modelo. Contacto real: WhatsApp
+  221 454 5088 · IG @lamparas_10mil11.
+  NO publicado: vive en web/ (staging del cerebro) hasta que el humano decida.
+  2026-10-18 · REESTRUCTURACIÓN pedida por la marca: «lámparas de hierro y
+  caireles hechas a mano» en lugar de «arañas»; fichas corregidas de Condesa
+  Almendra, Condesa 4 pisos, Gala Duquesa y Condesa Punta Almendra; en touch
+  arrancan apagadas y se prenden al tocar. Ese mismo día el humano fijó la tienda
+  Nube como la fuente de verdad: el catálogo pasó a leerse de ahí.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="img/logo.jpg">
+<link rel="canonical" href="https://www.10mil11.com/">
+<script>window.MUESTRA=['demos.hg-vl.com','0800webs.com'].includes(location.hostname);document.documentElement.classList.toggle('muestra',MUESTRA);</script>
+<style>
+  :root{
+    --bg:#0b0907; --bg2:#131009; --ink:#f4ecdd; --ink-dim:rgba(244,236,221,.62);
+    --ink-mute:rgba(244,236,221,.35); --line:rgba(244,236,221,.12);
+    --gold:#d3a95e; --gold-dim:rgba(211,169,94,.55); --amber:#e79447;
+    --glow:rgba(231,166,80,.32);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:'Jost',system-ui,sans-serif;font-weight:300;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+  h1,h2,h3{font-family:'Cormorant Garamond',serif;font-weight:600;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px;}
+
+  /* la linterna: el cursor ilumina la casa a oscuras */
+  #torch{position:fixed;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;opacity:.55;
+    background:radial-gradient(340px 340px at var(--tx,50vw) var(--ty,30vh),rgba(255,190,110,.16),rgba(255,150,60,.05) 45%,transparent 70%);}
+  @media(pointer:coarse){ #torch{display:none;} }
+
+  /* ── NAV ── */
+  nav{position:sticky;top:0;z-index:50;background:rgba(11,9,7,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:70px;}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
+  .brand img{width:40px;height:40px;object-fit:cover;border:1px solid var(--line);}
+  .brand b{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:20px;letter-spacing:.06em;}
+  .brand small{display:block;font-family:'Jost';font-weight:400;font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-top:-3px;}
+  .nav-links{display:flex;gap:24px;align-items:center;font-size:14px;letter-spacing:.04em;}
+  .nav-links a{text-decoration:none;color:var(--ink-dim);transition:color .2s;}
+  .nav-links a:hover{color:var(--gold);}
+  .nav-links a.imm{color:var(--gold);}
+  .nav-links a.imm:hover{color:var(--ink);}
+  .btn{display:inline-block;border:1px solid var(--gold);color:var(--gold);font-family:'Jost';font-weight:500;font-size:13.5px;letter-spacing:.1em;text-transform:uppercase;padding:11px 26px;text-decoration:none;transition:all .2s;white-space:nowrap;}
+  .btn:hover{background:var(--gold);color:#0b0907;}
+  .btn:active{transform:scale(.98);}
+  .btn.solid{background:var(--gold);color:#0b0907;}
+  .btn.solid:hover{filter:brightness(1.08);}
+  @media(max-width:920px){ .nav-links a:not(.btn){display:none;} }
+
+  /* ── HERO ── */
+  .hero{position:relative;min-height:min(94dvh,860px);display:flex;align-items:flex-end;overflow:hidden;}
+  .hero-bg{position:absolute;inset:0;background:url('img/hero.jpg') center 24%/cover no-repeat;}
+  .hero-bg::after{content:'';position:absolute;inset:0;background:
+    radial-gradient(60% 55% at 24% 78%,rgba(11,9,7,.72),transparent 75%),
+    linear-gradient(180deg,rgba(11,9,7,.55) 0%,rgba(11,9,7,.26) 40%,rgba(11,9,7,.9) 74%,rgba(11,9,7,.99) 100%);}
+  #dust{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  .hero-in{position:relative;z-index:2;padding-bottom:72px;max-width:660px;}
+  .hero .kicker{font-family:'Jost';font-weight:500;font-size:11.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+  .hero h1{font-size:clamp(2.7rem,5.4vw,4.5rem);line-height:1.04;font-weight:600;text-shadow:0 2px 26px rgba(0,0,0,.8),0 1px 5px rgba(0,0,0,.55);}
+  .hero h1 i{color:var(--gold);}
+  .hero p{margin:18px 0 30px;color:var(--ink);opacity:.85;font-size:17px;max-width:46ch;text-shadow:0 2px 18px rgba(0,0,0,.85),0 1px 4px rgba(0,0,0,.7);}
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+  .hero-note{width:100%;margin-top:16px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute);}
+
+  /* ── SECCIONES ── */
+  section{padding:92px 0;position:relative;z-index:2;}
+  .sec-head{margin-bottom:46px;max-width:640px;}
+  .sec-head h2{font-size:clamp(2rem,3.4vw,3rem);line-height:1.08;}
+  .sec-head p{color:var(--ink-dim);margin-top:12px;}
+  .rule{display:flex;align-items:center;gap:7px;margin-bottom:22px;}
+  .rule i{width:44px;height:1px;background:var(--gold);}
+  .rule s{width:7px;height:7px;display:inline-block;}  /* guiño al vitraux del estudio */
+  .rule s:nth-child(2){background:#c9463d;} .rule s:nth-child(3){background:#2e9e63;} .rule s:nth-child(4){background:#3d7dc9;}
+
+  /* ── CATÁLOGO ENCENDIDO ── */
+  #catalogo{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .cat-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:8px;}
+  .tabs{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:34px;border-bottom:1px solid var(--line);}
+  .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--ink-dim);font-family:'Jost';font-weight:400;font-size:14.5px;letter-spacing:.05em;padding:0 2px 12px;cursor:pointer;transition:all .2s;}
+  .tab:hover{color:var(--ink);}
+  .tab.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:500;}
+  .tab small{font-size:11px;opacity:.55;}
+  @media(max-width:640px){ .tabs{flex-wrap:nowrap;overflow-x:auto;gap:20px;scrollbar-width:none;} .tabs::-webkit-scrollbar{display:none;} .tab{white-space:nowrap;} }
+  .switch{display:flex;align-items:center;gap:10px;background:none;border:1px solid var(--line);color:var(--ink-dim);font-family:'Jost';font-weight:400;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;padding:9px 16px;cursor:pointer;transition:all .25s;}
+  .switch i{width:26px;height:14px;border:1px solid var(--gold-dim);border-radius:99px;position:relative;transition:background .25s;}
+  .switch i::after{content:'';position:absolute;top:2px;left:2px;width:8px;height:8px;border-radius:50%;background:var(--ink-mute);transition:all .25s;}
+  .switch.on{color:var(--gold);border-color:var(--gold-dim);}
+  .switch.on i{background:rgba(231,166,80,.25);}
+  .switch.on i::after{left:14px;background:var(--amber);box-shadow:0 0 8px var(--amber);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
+  .prod{position:relative;background:#0d0a07;border:1px solid var(--line);display:flex;flex-direction:column;transition:border-color .5s;}
+  .prod .ph{position:relative;overflow:hidden;aspect-ratio:1/1.06;}
+  .prod .ph img{width:100%;height:100%;object-fit:cover;filter:brightness(.4) saturate(.55);transition:filter .8s ease,transform .8s ease;}
+  .prod .ph::after{content:'';position:absolute;inset:0;background:radial-gradient(75% 62% at 50% 34%,var(--glow),transparent 72%);opacity:0;transition:opacity .8s ease;pointer-events:none;}
+  .prod .hint{position:absolute;top:10px;right:12px;z-index:2;font-family:'Jost';font-weight:500;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);transition:opacity .4s;}
+  .prod.on{border-color:rgba(211,169,94,.4);}
+  .prod.on .ph img{filter:brightness(1.06) saturate(1.05);transform:scale(1.025);}
+  .prod.on .ph::after{opacity:1;animation:prende .75s ease-out backwards;}
+  .prod.on .ph img{animation:prende-img .75s ease-out backwards;}
+  .grid.showroom .prod.on .ph::after,.grid.showroom .prod.on .ph img{animation-delay:var(--d,0ms);}
+  @keyframes prende{0%{opacity:0}16%{opacity:.9}28%{opacity:.2}44%{opacity:1}58%{opacity:.55}100%{opacity:1}}
+  @keyframes prende-img{0%{filter:brightness(.4) saturate(.55)}16%{filter:brightness(1.15) saturate(1)}28%{filter:brightness(.55) saturate(.6)}44%{filter:brightness(1.06) saturate(1.05)}}
+  .prod.on .hint{opacity:0;}
+  .prod-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:5px;flex:1;}
+  .prod-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;}
+  .prod h3{font-size:21px;font-weight:600;transition:color .5s;}
+  .prod.on h3{color:var(--gold);}
+  .price{font-family:'Jost';font-weight:500;color:var(--gold);white-space:nowrap;font-variant-numeric:tabular-nums;font-size:14.5px;opacity:.55;transition:opacity .5s;}
+  .prod.on .price{opacity:1;}
+  .prod .d{font-size:13.5px;color:var(--ink-dim);flex:1;}
+  .prod .links{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;}
+  .prod .wa{font-family:'Jost';font-weight:500;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute);text-decoration:none;transition:color .3s;}
+  .prod .wa:hover{color:var(--gold);}
+  .prod.on .wa{color:var(--gold-dim);}
+  .prod.on .wa:hover{color:var(--gold);}
+  .cat-note{margin-top:26px;font-size:12.5px;color:var(--ink-mute);letter-spacing:.03em;}
+  .cat-note a{color:var(--gold-dim);}
+
+  /* ── EL JARDÍN (video wall) ── */
+  .reels{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .reel{position:relative;aspect-ratio:9/16;overflow:hidden;border:1px solid var(--line);background:#000;}
+  .reel video{width:100%;height:100%;object-fit:cover;display:block;}
+  .reel span{position:absolute;left:12px;bottom:10px;z-index:2;font-family:'Jost';font-weight:500;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,236,221,.9);text-shadow:0 1px 6px rgba(0,0,0,.8);}
+  @media(max-width:1000px){ .reels{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:560px){
+    .reels{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;-webkit-overflow-scrolling:touch;}
+    .reel{flex:0 0 60%;scroll-snap-align:center;}
+  }
+
+  /* ── TALLER ── */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+  .split h2{font-size:clamp(1.9rem,3vw,2.6rem);line-height:1.12;margin-bottom:14px;}
+  .split p{color:var(--ink-dim);margin-bottom:10px;}
+  .checks{margin-top:16px;display:grid;gap:10px;font-size:15px;}
+  .checks li{list-style:none;padding-left:24px;position:relative;}
+  .checks li::before{content:'';position:absolute;left:0;top:9px;width:10px;height:10px;background:var(--gold);}
+  .taller-vids{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .taller-vids .reel{aspect-ratio:9/14;}
+  @media(max-width:820px){ .split{grid-template-columns:1fr;gap:28px;} }
+
+  /* ── EN TU CASA ── */
+  .moments{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;}
+  .mom{flex:0 0 min(300px,74vw);scroll-snap-align:start;position:relative;overflow:hidden;border:1px solid var(--line);}
+  .mom img{aspect-ratio:4/5;object-fit:cover;width:100%;}
+  .mom figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 14px 10px;background:linear-gradient(transparent,rgba(0,0,0,.8));font-family:'Jost';font-weight:500;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;}
+
+  /* ── CONTACTO ── */
+  #contacto{background:var(--bg2);border-top:1px solid var(--line);}
+  .contact{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;}
+  .c-rows{display:grid;gap:14px;}
+  .c-row{border-top:1px solid var(--line);padding-top:13px;}
+  .c-row b{display:block;font-family:'Jost';font-weight:500;font-size:11.5px;letter-spacing:.16em;color:var(--ink-mute);text-transform:uppercase;margin-bottom:3px;}
+  .c-row a{color:var(--gold);text-decoration:none;}
+  .c-row a:hover{text-decoration:underline;}
+  .c-photo{border:1px solid var(--line);overflow:hidden;}
+  .c-photo img{aspect-ratio:4/5;object-fit:cover;width:100%;}
+  @media(max-width:820px){ .contact{grid-template-columns:1fr;gap:28px;} }
+
+  footer{border-top:1px solid var(--line);padding:42px 0 60px;position:relative;z-index:2;}
+  .foot-in{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center;color:var(--ink-mute);font-size:13px;}
+  .foot-note{width:100%;margin-top:14px;font-size:11.5px;color:var(--ink-mute);line-height:1.7;}
+  html:not(.muestra) .demo-tag,html:not(.muestra) .solo-muestra{display:none;}
+  .demo-tag{position:fixed;left:16px;bottom:16px;z-index:60;font-size:11px;color:var(--ink-mute);background:rgba(11,9,7,.85);border:1px solid var(--line);padding:6px 12px;backdrop-filter:blur(8px);}
+
+  /* ── A TU MEDIDA (asesoría + armado) ── */
+  [hidden]{display:none!important;}
+  #armar{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .cfg{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:44px;align-items:start;}
+  .step{border-top:1px solid var(--line);padding:22px 0 24px;}
+  .step:first-child{border-top:none;padding-top:0;}
+  .step .n{font-family:'Jost';font-weight:500;font-size:11.5px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;}
+  .step h3{font-size:24px;margin:2px 0 4px;}
+  .step .help{color:var(--ink-dim);font-size:14px;margin-bottom:14px;}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;}
+  .chip{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:84px;padding:12px 12px 10px;border:1px solid var(--line);background:#0d0a07;color:var(--ink-dim);font-family:'Jost';font-weight:400;font-size:13px;cursor:pointer;transition:border-color .2s,color .2s,background .2s;}
+  .chip:hover{color:var(--ink);border-color:var(--gold-dim);}
+  .chip svg{width:34px;height:52px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;}
+  .chip svg.w{width:56px;height:36px;}
+  .chip i{display:block;width:26px;height:26px;border:1px solid var(--line);}
+  .chip.txt{flex-direction:row;min-width:0;padding:9px 15px;}
+  .chip[aria-pressed="true"]{border-color:var(--gold);color:var(--gold);background:rgba(211,169,94,.08);}
+  .chip:active{transform:scale(.98);}
+  .sub{margin-top:16px;}
+  .sub-l{display:block;font-family:'Jost';font-weight:500;font-size:11.5px;letter-spacing:.16em;color:var(--ink-mute);text-transform:uppercase;margin-bottom:8px;}
+  .flds{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:12px;}
+  .fld{display:flex;flex-direction:column;gap:6px;font-family:'Jost';font-weight:500;font-size:11.5px;letter-spacing:.14em;color:var(--ink-mute);text-transform:uppercase;}
+  .fld input,.fld select{background:#0d0a07;border:1px solid var(--line);color:var(--ink);font-family:'Jost';font-weight:400;font-size:16px;letter-spacing:0;text-transform:none;padding:10px 12px;width:100%;min-width:0;border-radius:0;}
+  .fld input:focus,.fld select:focus{outline:none;border-color:var(--gold);}
+  .sug{margin-top:14px;padding:12px 16px;border-left:2px solid var(--gold);background:rgba(211,169,94,.06);font-size:14.5px;line-height:1.6;}
+  .sug:empty{display:none;}
+  .sug small{display:block;color:var(--ink-mute);font-size:12px;margin-top:4px;}
+  .base{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px;border:1px solid rgba(211,169,94,.35);}
+  .base[hidden]{display:none;}
+  .base img{width:54px;height:54px;object-fit:cover;}
+  .base span{flex:1;font-size:14px;}
+  .base button{background:none;border:none;color:var(--ink-mute);font-family:'Jost';font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;}
+  .base button:hover{color:var(--gold);}
+  .ficha{position:sticky;top:96px;border:1px solid rgba(211,169,94,.35);background:#0d0a07;padding:24px 22px;}
+  .ficha h3{font-size:26px;margin-bottom:12px;}
+  .ficha dl{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;font-size:14px;margin-bottom:16px;}
+  .ficha dt{color:var(--ink-mute);font-family:'Jost';font-weight:500;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding-top:3px;}
+  .ficha dd{color:var(--ink);}
+  .ficha .plazo{border-top:1px solid var(--line);padding-top:14px;margin-bottom:16px;font-size:14px;color:var(--ink-dim);}
+  .ficha .plazo b{color:var(--gold);font-weight:500;}
+  .ficha .btn{width:100%;text-align:center;white-space:normal;padding:13px 14px;line-height:1.35;}
+  .ficha .fine{margin-top:10px;font-size:12px;color:var(--ink-mute);}
+  .reserva{border-top:1px solid var(--line);margin-top:18px;padding-top:16px;}
+  .reserva h4{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;margin-bottom:8px;}
+  .reserva .monto{font-size:14.5px;margin-bottom:12px;}
+  .reserva .monto b,.reserva.hecha b{color:var(--gold);font-weight:500;}
+  .reserva .chips{margin-bottom:14px;}
+  .reserva .btn{margin-top:8px;}
+  .reserva .btn[disabled]{opacity:.45;cursor:default;}
+  .reserva.hecha p{font-size:14.5px;margin-bottom:10px;}
+  .reserva.hecha dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px;margin:0 0 12px;}
+  .reserva.hecha dt{color:var(--ink-mute);font-family:'Jost';font-weight:500;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding-top:3px;}
+  .reserva.hecha dd{word-break:break-all;}
+  .copiar{background:none;border:1px solid var(--line);color:var(--gold);font-family:'Jost';font-size:11px;letter-spacing:.08em;padding:2px 8px;cursor:pointer;margin-left:4px;}
+  .prod .wa.res{color:var(--gold);}
+  @media(max-width:900px){ .cfg{grid-template-columns:minmax(0,1fr);gap:28px;} .ficha{position:static;} }
+
+  /* ── CÓMO SE COMPRA ── */
+  .pasos{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;list-style:none;}
+  .paso{border-top:2px solid var(--gold-dim);padding-top:14px;}
+  .paso b{display:block;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;line-height:1;color:var(--gold);}
+  .paso h3{font-size:20px;margin:8px 0 6px;}
+  .paso p{font-size:14px;color:var(--ink-dim);}
+  .promesa{margin-top:38px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.25;max-width:30ch;}
+  .promesa i{color:var(--gold);}
+  @media(max-width:980px){ .pasos{grid-template-columns:1fr 1fr;} }
+  @media(max-width:560px){ .pasos{grid-template-columns:1fr;} }
+
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.16,1,.3,1);}
+  .rv.in{opacity:1;transform:none;}
+  @media(prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none;transition:none;} #torch{display:none;} .prod .ph::after,.prod .ph img{animation:none!important;} }
+</style>
+</head>
+<body>
+
+<div id="torch" aria-hidden="true"></div>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">
+      <img src="img/logo.jpg" alt="Logo 10Mil11">
+      <span><b>10Mil11</b><small>Lámparas con Amor</small></span>
+    </a>
+    <div class="nav-links">
+      <a href="#catalogo">Catálogo</a>
+      <a href="#armar">A tu medida</a>
+      <a href="#comprar">Cómo se compra</a>
+      <a href="#jardin">El jardín</a>
+      <a class="imm" href="inmersivo.html">✦ Inmersiva</a>
+      <a class="btn" href="https://wa.me/5492214545088?text=Hola%2010Mil11!%20Vi%20la%20web%20y%20quiero%20consultar%20por%20una%20l%C3%A1mpara." target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <canvas id="dust" aria-hidden="true"></canvas>
+  <div class="wrap hero-in">
+    <div class="kicker">Lámparas de hierro y caireles hechas a mano · La Plata</div>
+    <h1>Alegrá tu casa, <i>alegrá tu vida.</i></h1>
+    <p>Cada lámpara se corta, se pinta y se viste cairel por cairel en el taller — y se fotografía donde nace: el jardín. Después viaja a tu comedor, tu cocina o tu mesa de luz, a cualquier punto del país.</p>
+    <div class="hero-ctas">
+      <a class="btn solid" href="#catalogo">Encender el catálogo</a>
+      <a class="btn" href="inmersivo.html">Experiencia inmersiva ✦</a>
+    </div>
+    <div class="hero-note">Seña del 50% · Lista en unos 30 días · Envíos a todo el país</div>
+  </div>
+</header>
+
+<section id="catalogo">
+  <div class="wrap rv">
+    <div class="cat-top">
+      <div class="sec-head" style="margin-bottom:18px;">
+        <div class="rule"><i></i><s></s><s></s><s></s></div>
+        <h2>El catálogo, encendido</h2>
+        <p>Están todas apagadas. Pasá el cursor —o tocá— y cada una prende con su luz. Los mismos modelos, fotos y precios de la tienda online.</p>
+      </div>
+      <button class="switch" id="allOn" aria-pressed="false"><i></i>Encender showroom</button>
+    </div>
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <div class="grid" id="grid"></div>
+    <p class="cat-note">Catálogo, categorías y precios de la <a href="https://lamparasconamor10mil11.mitiendanube.com/" target="_blank" rel="noopener">tienda online oficial</a> (<span id="relevado"></span>). ¿Otra medida, otros caireles u otro color? <a href="#armar">Armala a tu medida</a>.</p>
+  </div>
+</section>
+
+<section id="armar">
+  <div class="wrap rv">
+    <div class="sec-head">
+      <div class="rule"><i></i><s></s><s></s><s></s></div>
+      <h2>A tu medida</h2>
+      <p>Cada lámpara se arma para un lugar. Contanos dónde va y elegí caireles, plaquetas y hierro: te armamos la ficha y la mandás por WhatsApp para que el taller te pase precio, fecha y envío.</p>
+    </div>
+    <div class="cfg">
+      <div id="pasosCfg">
+        <div class="step">
+          <span class="n">01 · El lugar</span>
+          <h3>¿Dónde va?</h3>
+          <p class="help">Con tus medidas te sugerimos un tamaño. Es una guía: la medida final la ajustás con el taller.</p>
+          <div class="chips" data-k="lugar">
+            <button class="chip txt" data-v="mesa">Sobre la mesa</button>
+            <button class="chip txt" data-v="ambiente">Centro del ambiente</button>
+            <button class="chip txt" data-v="pasillo">Pasillo, cocina o barra</button>
+            <button class="chip txt" data-v="velador">Mesa de luz</button>
+          </div>
+          <div class="sub flds" id="medidas">
+            <label class="fld">Altura del techo (cm)<input type="number" inputmode="numeric" min="180" max="800" id="techo" placeholder="ej. 260"></label>
+            <label class="fld" data-para="mesa">Ancho de la mesa (cm)<input type="number" inputmode="numeric" min="40" max="300" id="mesaAncho" placeholder="ej. 90"></label>
+            <label class="fld" data-para="mesa">Largo de la mesa (cm)<input type="number" inputmode="numeric" min="40" max="600" id="mesaLargo" placeholder="ej. 160"></label>
+            <label class="fld" data-para="ambiente">Largo del ambiente (m)<input type="number" inputmode="decimal" min="1" max="30" step="0.1" id="ambLargo" placeholder="ej. 4"></label>
+            <label class="fld" data-para="ambiente">Ancho del ambiente (m)<input type="number" inputmode="decimal" min="1" max="30" step="0.1" id="ambAncho" placeholder="ej. 3.5"></label>
+          </div>
+          <div class="sug" id="sug" aria-live="polite"></div>
+        </div>
+
+        <div class="step">
+          <span class="n">02 · El tamaño</span>
+          <h3>Diámetro y pisos</h3>
+          <div class="base" id="base" hidden><img alt=""><span></span><button type="button" id="baseX">Quitar</button></div>
+          <div class="flds">
+            <label class="fld">Diámetro<select id="diam"><option value="">A definir</option></select></label>
+            <label class="fld">Pisos<select id="pisos"><option value="">A definir</option><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="n">03 · El cristal</span>
+          <h3>Caireles</h3>
+          <p class="help">Los clásicos del taller, todos de cristal.</p>
+          <div class="chips" data-k="cairel" data-svg="1">
+            <button class="chip" data-v="almendra">Almendra</button>
+            <button class="chip" data-v="péndulo">Péndulo</button>
+            <button class="chip" data-v="gotita">Gotita</button>
+            <button class="chip" data-v="hojita">Hojita</button>
+          </div>
+          <div class="sub">
+            <span class="sub-l">Cómo cuelgan</span>
+            <div class="chips" data-k="disp" data-svg="1">
+              <button class="chip" data-v="recta">Recta</button>
+              <button class="chip" data-v="zigzag">Zigzag</button>
+            </div>
+          </div>
+          <div class="sub">
+            <span class="sub-l">Plaquetas (barritas de cristal)</span>
+            <div class="chips" data-k="plaq">
+              <button class="chip txt" data-v="no">Sin plaquetas</button>
+              <button class="chip txt" data-v="primer piso">El primer piso</button>
+              <button class="chip txt" data-v="todos los pisos">Todos los pisos</button>
+            </div>
+          </div>
+          <div class="sub" id="plaqOpts" hidden>
+            <div class="chips" data-k="perf" data-svg="1">
+              <button class="chip" data-v="1 perforación">Una perforación</button>
+              <button class="chip" data-v="2 perforaciones">Dos perforaciones</button>
+            </div>
+            <div class="flds" style="margin-top:12px;max-width:340px;">
+              <label class="fld">Largo de la plaqueta<select id="plaqLargo"><option value="">A definir</option><option>10 cm</option><option>12 cm</option><option>15 cm</option><option>20 cm</option></select></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="n">04 · El hierro</span>
+          <h3>Hierro y cadena</h3>
+          <div class="chips" data-k="grosor" data-svg="1">
+            <button class="chip" data-v="finito">Finito</button>
+            <button class="chip" data-v="gruesito">Gruesito</button>
+            <button class="chip" data-v="grueso">Más grueso</button>
+          </div>
+          <div class="sub">
+            <span class="sub-l">Color</span>
+            <div class="chips" data-k="color">
+              <button class="chip txt" data-v="negro"><i style="background:#141210"></i>Negro</button>
+              <button class="chip txt" data-v="blanco"><i style="background:#ece7dd"></i>Blanco</button>
+              <button class="chip txt" data-v="dorado"><i style="background:#c3a15c"></i>Dorado</button>
+              <button class="chip txt" data-v="óxido"><i style="background:#8a4a2b"></i>Óxido</button>
+              <button class="chip txt" data-v="otro (lo charlamos)">Otro</button>
+            </div>
+          </div>
+          <p class="help" style="margin:14px 0 0;">La cadena la calcula el taller con tu altura de techo, para que la lámpara quede a la altura justa.</p>
+        </div>
+
+        <div class="step">
+          <span class="n">05 · La entrega</span>
+          <h3>¿Envío o retiro?</h3>
+          <div class="chips" data-k="entrega">
+            <button class="chip txt" data-v="envio">Envío por encomienda</button>
+            <button class="chip txt" data-v="retiro">Retiro en el taller</button>
+          </div>
+          <div class="flds sub" id="destino" hidden>
+            <label class="fld">Localidad y código postal<input type="text" id="localidad" autocomplete="postal-code" placeholder="ej. Rosario, 2000"></label>
+          </div>
+          <p class="help" style="margin:12px 0 0;">El envío corre por cuenta del comprador: con tu localidad te pasamos el costo antes de despachar.</p>
+        </div>
+      </div>
+
+      <aside class="ficha" aria-live="polite">
+        <h3>Tu ficha</h3>
+        <dl id="fichaDl"></dl>
+        <div class="plazo" id="plazo"></div>
+        <a class="btn solid" id="fichaWa" href="#" target="_blank" rel="noopener">Mandar la ficha por WhatsApp</a>
+        <p class="fine">El taller te confirma precio, fecha y envío. Se reserva con una seña del 50%.</p>
+        <div class="reserva" id="reserva" hidden>
+          <h4>Reservala online</h4>
+          <p class="fine" id="rSin">Para reservar con seña, elegí un modelo del catálogo con el botón «Reservar».</p>
+          <div id="rCon" hidden>
+            <p class="monto" id="rMonto"></p>
+            <div class="flds">
+              <label class="fld">Tu nombre<input id="nombreR" autocomplete="name" maxlength="120"></label>
+              <label class="fld">Tu WhatsApp<input id="telR" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" placeholder="ej. 221 555 0000"></label>
+            </div>
+            <span class="sub-l" style="margin-top:12px;">Pagás la seña con</span>
+            <div class="chips" id="rFormas"></div>
+            <button type="button" class="btn solid" id="rBtn" disabled>Elegí cómo pagar la seña</button>
+            <p class="fine" id="rMsg" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="reserva hecha" id="rHecha" hidden aria-live="polite"></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section id="comprar" class="wrap rv">
+  <div class="sec-head">
+    <div class="rule"><i></i><s></s><s></s><s></s></div>
+    <h2>Cómo se compra</h2>
+    <p>Sin vueltas: hablás con el taller, señás y te llevás una fecha.</p>
+  </div>
+  <ol class="pasos">
+    <li class="paso"><b>1</b><h3>Asesoría</h3><p>Por WhatsApp: el espacio, la altura del techo, el largo de la mesa. Definimos modelo, medidas, caireles, hierro y cadena.</p></li>
+    <li class="paso"><b>2</b><h3>Seña del 50%</h3><p>Por transferencia, o en efectivo si estás cerca.<span data-si-reserva hidden> También acá mismo, con el botón «Reservar»: Mercado Pago o transferencia.</span> Con la seña te damos la fecha de entrega.</p></li>
+    <li class="paso"><b>3</b><h3>Taller</h3><p>Unos 30 días; a veces 20, y las chiquitas salen antes. Se corta, se pinta y se viste cairel por cairel.</p></li>
+    <li class="paso"><b>4</b><h3>Lista</h3><p>Te avisamos que está terminada y abonás el 50% restante.</p></li>
+    <li class="paso"><b>5</b><h3>Entrega</h3><p>Por encomienda a cualquier punto del país, a cargo del comprador, o la retirás en el taller.</p></li>
+  </ol>
+  <p class="promesa">Te damos una fecha y la cumplimos: <i>ese día o antes, nunca después.</i></p>
+</section>
+
+<section id="jardin" class="wrap rv">
+  <div class="sec-head">
+    <div class="rule"><i></i><s></s><s></s><s></s></div>
+    <h2>El jardín de las lámparas</h2>
+    <p>No es un estudio ni un render: las lámparas se cuelgan de los árboles del taller y se filman ahí, con la luz del día entre los caireles. Reels reales del Instagram.</p>
+  </div>
+  <div class="reels">
+    <div class="reel"><video class="loop" muted loop playsinline preload="metadata" poster="media/jardin-tiers.jpg" src="media/jardin-tiers.mp4" aria-label="Lámpara de tres pisos colgada en el jardín"></video><span>El jardín</span></div>
+    <div class="reel"><video class="loop" muted loop playsinline preload="metadata" poster="media/rayo-cuadrada.jpg" src="media/rayo-cuadrada.mp4" aria-label="Lámpara cuadrada con un rayo de sol"></video><span>El rayo de sol</span></div>
+    <div class="reel"><video class="loop" muted loop playsinline preload="metadata" poster="media/caireles-gota.jpg" src="media/caireles-gota.mp4" aria-label="Caireles de gota de cerca"></video><span>El cairel</span></div>
+    <div class="reel"><video class="loop" muted loop playsinline preload="metadata" poster="media/rosa-jardin.jpg" src="media/rosa-jardin.mp4" aria-label="Lámpara rosa entre las plantas"></video><span>La rosa</span></div>
+    <div class="reel"><video class="loop" muted loop playsinline preload="metadata" poster="media/pisos-interior.jpg" src="media/pisos-interior.mp4" aria-label="Lámpara de pisos en un interior"></video><span>Los pisos</span></div>
+    <div class="reel"><video class="loop" muted loop playsinline preload="metadata" poster="media/encasa-doble.jpg" src="media/encasa-doble.mp4" aria-label="Lámpara de dos pisos instalada"></video><span>En casa</span></div>
+    <div class="reel"><video class="loop" muted loop playsinline preload="metadata" poster="media/cocina-blanca.jpg" src="media/cocina-blanca.mp4" aria-label="Dos lámparas sobre una cocina blanca"></video><span>La cocina</span></div>
+    <div class="reel"><video class="loop" muted loop playsinline preload="metadata" poster="media/vitraux-arana.jpg" src="media/vitraux-arana.mp4" aria-label="Lámpara con vitraux de colores de fondo"></video><span>El vitraux</span></div>
+  </div>
+</section>
+
+<section id="taller" class="wrap rv">
+  <div class="split">
+    <div class="taller-vids">
+      <div class="reel"><video class="loop" muted loop playsinline preload="metadata" poster="media/taller-banco.jpg" src="media/taller-banco.mp4" aria-label="El banco de trabajo del taller"></video><span>El banco</span></div>
+      <div class="reel"><video class="loop" muted loop playsinline preload="metadata" poster="media/taller-manos.jpg" src="media/taller-manos.mp4" aria-label="Las manos armando los caireles"></video><span>Las manos</span></div>
+    </div>
+    <div>
+      <div class="rule"><i></i><s></s><s></s><s></s></div>
+      <h2>Se llaman «con amor» porque es literal</h2>
+      <p>Acá no hay línea de montaje: hay un banco de trabajo, hierro cortado y pintado a mano, y cientos de caireles enhebrados uno por uno. Por eso no existen dos lámparas iguales.</p>
+      <ul class="checks">
+        <li>Hierro y vidrio de verdad — nada de plástico</li>
+        <li>Cada pieza es única, armada a pedido</li>
+        <li>Medidas y colores a tu espacio</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="casa" class="wrap rv">
+  <div class="sec-head">
+    <div class="rule"><i></i><s></s><s></s><s></s></div>
+    <h2>En tu casa</h2>
+    <p>Fotos reales: las lámparas instaladas y el estudio de vitraux donde se prueban. Deslizá.</p>
+  </div>
+  <div class="moments">
+    <figure class="mom"><img src="img/comedor.jpg" alt="Comedor moderno con lámpara rectangular de caireles" loading="lazy"><figcaption>El comedor</figcaption></figure>
+    <figure class="mom"><img src="img/vitraux-rect.jpg" alt="Lámpara rectangular en el estudio de vitraux" loading="lazy"><figcaption>La rectangular</figcaption></figure>
+    <figure class="mom"><img src="img/estudio.jpg" alt="El estudio con ventanas de vitraux de colores" loading="lazy"><figcaption>El estudio</figcaption></figure>
+    <figure class="mom"><img src="img/drum-vitraux.jpg" alt="Lámpara de tambor con vitraux de fondo" loading="lazy"><figcaption>El tambor</figcaption></figure>
+    <figure class="mom"><img src="img/cuadrada.jpg" alt="Lámpara cuadrada de varillas de vidrio en el jardín" loading="lazy"><figcaption>La cuadrada</figcaption></figure>
+    <figure class="mom"><img src="img/veladores.jpg" alt="Par de veladores de caireles" loading="lazy"><figcaption>Los veladores</figcaption></figure>
+  </div>
+</section>
+
+<section id="contacto">
+  <div class="wrap rv contact">
+    <div>
+      <div class="rule"><i></i><s></s><s></s><s></s></div>
+      <h2 style="font-size:clamp(1.9rem,3vw,2.6rem);margin-bottom:8px;">Tu lámpara te está esperando</h2>
+      <p style="color:var(--ink-dim);margin-bottom:18px;">Contanos el espacio y te ayudamos a elegir modelo, medida y color. Atención personalizada, de taller a tu casa.</p>
+      <div class="c-rows">
+        <div class="c-row"><b>WhatsApp</b><a href="https://wa.me/5492214545088?text=Hola%2010Mil11!%20Quiero%20asesorarme%20por%20una%20l%C3%A1mpara." target="_blank" rel="noopener">221 454 5088</a></div>
+        <div class="c-row"><b>Instagram</b><a href="https://www.instagram.com/lamparas_10mil11/" target="_blank" rel="noopener">@lamparas_10mil11</a></div>
+        <div class="c-row"><b>Tienda online</b><a href="https://lamparasconamor10mil11.mitiendanube.com/" target="_blank" rel="noopener">lamparasconamor10mil11.mitiendanube.com</a></div>
+        <div class="c-row"><b>Envíos y pago</b><span style="color:var(--ink-dim)">Seña del 50% por transferencia (o efectivo si estás cerca) y el resto al terminar · Encomienda a todo el país a cargo del comprador, o retiro en el taller</span></div>
+      </div>
+    </div>
+    <div class="c-photo"><img src="img/hero.jpg" alt="Lámpara encendida al atardecer en el jardín del taller" loading="lazy"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <a class="brand" href="#top"><img src="img/logo.jpg" alt="" style="width:34px;height:34px;object-fit:cover;border:1px solid var(--line);"><span><b style="font-family:'Cormorant Garamond',serif;font-size:16px;">10Mil11</b></span></a>
+    <span>La Plata, Buenos Aires · Envíos a todo el país</span>
+    <span>© 2026 10Mil11 — Lámparas con Amor</span>
+    <span class="foot-note">Todas las fotos y videos son reales: del Instagram @lamparas_10mil11 y de la tienda online oficial. Cada modelo del catálogo lleva su propia foto, nombre y precio de la tienda; los precios pueden cambiar.<span class="solo-muestra"> Esta es la vitrina de Human Glitche: el sitio de la marca es <a href="https://www.10mil11.com/">www.10mil11.com</a>.</span></span>
+  </div>
+</footer>
+
+<span class="demo-tag">DEMO · propuesta de Human Glitche</span>
+
+<script src="catalogo.js"></script>
+<script>
+'use strict';
+// Catálogo = la tienda online, tal cual: catalogo.js lo genera
+// herramientas/tiendanube-catalogo/relevar.py (vault) con nombre, precio, link,
+// categorías y la foto propia de cada producto. Para actualizar: correrlo de nuevo.
+const WA='https://wa.me/5492214545088?text=';
+const C=window.CATALOGO;
+const fmt=v=>v?'$\u00a0'+v.toLocaleString('es-AR'):'Consultar';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tabsEl=document.getElementById('tabs'), gridEl=document.getElementById('grid');
+let cur=0, showroom=false;
+function renderTabs(){
+  tabsEl.innerHTML=C.tabs.map(([nombre,ids],i)=>
+    `<button class="tab${i===cur?' on':''}" role="tab" aria-selected="${i===cur}" data-i="${i}">${esc(nombre)} <small>${ids.length}</small></button>`).join('');
+  [...tabsEl.children].forEach(b=>b.addEventListener('click',()=>{cur=+b.dataset.i;renderTabs();renderGrid();}));
+}
+function renderGrid(){
+  const touch=matchMedia('(pointer:coarse)').matches;
+  gridEl.classList.toggle('showroom',showroom);
+  gridEl.innerHTML=C.tabs[cur][1].map((id,i)=>{
+    const d=C.p[id];
+    const msg=encodeURIComponent(`Hola 10Mil11! Vi la ${d.full} (${fmt(d.p)}) en la web y quiero saber más.`);
+    return `<article class="prod${showroom?' on':''}" tabindex="0" style="--d:${Math.min(i,12)*90}ms">
+      <div class="ph"><img src="${esc(d.img)}" alt="${esc(d.full)}" loading="lazy"><span class="hint">${touch?'tocá y se enciende':'pasá el cursor'}</span></div>
+      <div class="prod-body">
+        <div class="prod-top"><h3>${esc(d.n)}</h3><span class="price">${fmt(d.p)}</span></div>
+        <div class="d">${esc(d.s)}</div>
+        <div class="links">
+          <a class="wa" href="${WA}${msg}" target="_blank" rel="noopener">WhatsApp →</a>
+          ${window.RESERVA&&RESERVA.sena[d.a]?`<a class="wa res" href="#armar" data-reservar="${esc(id)}">Reservar ✦</a>`:''}
+          <a class="wa" href="#armar" data-armar="${esc(id)}">A tu medida</a>
+          <a class="wa" href="${esc(d.url)}" target="_blank" rel="noopener">En la tienda ↗</a>
+        </div>
+      </div>
+    </article>`;}).join('');
+  // encendido: todas arrancan apagadas. Con mouse, el cursor la prende mientras está encima;
+  // con el dedo, cada toque la prende o la apaga; con teclado, el foco. El showroom prende todo.
+  gridEl.querySelectorAll('.prod').forEach(p=>{
+    p._sync=()=>p.classList.toggle('on',showroom||p._hov||p._tap||p._kb);
+    p.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse'){p._hov=true;p._sync();}});
+    p.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'){p._hov=false;p._sync();}});
+    p.addEventListener('pointerup',e=>{if(e.pointerType!=='mouse'&&!e.target.closest('a')){p._tap=!p._tap;p._sync();}});
+    p.addEventListener('focus',()=>{p._kb=p.matches(':focus-visible');p._sync();});
+    p.addEventListener('blur',()=>{p._kb=false;p._sync();});
+  });
+}
+renderTabs();renderGrid();
+document.getElementById('relevado').textContent='relevado el '+C.relevado.split('-').reverse().join('/');
+
+(()=>{
+// ── A tu medida: guía de medidas + ficha que viaja por WhatsApp ──
+// Proceso contado por los dueños (charla 18/10/2026): asesoría, seña 50%, ~30 días
+// (20 o menos las chiquitas), aviso + saldo 50%, encomienda a cargo del comprador o retiro.
+const SVG={
+  almendra:'<svg viewBox="0 0 40 64"><path d="M20 2v6"/><path d="M20 8C29 19 30 41 20 61C10 41 11 19 20 8Z"/><path d="M20 8L14.5 31L20 61L25.5 31Z" opacity=".5"/></svg>',
+  'péndulo':'<svg viewBox="0 0 40 64"><path d="M20 2v5"/><path d="M15 7H25L27 41L20 62L13 41Z"/><path d="M20 7V62M13 41H27" opacity=".5"/></svg>',
+  gotita:'<svg viewBox="0 0 40 64"><path d="M20 2v6"/><path d="M20 8C24 19 31 31 31 43A11 11 0 0 1 9 43C9 31 16 19 20 8Z"/><path d="M20 8L15 42L20 54L25 42Z" opacity=".5"/></svg>',
+  hojita:'<svg viewBox="0 0 40 64"><path d="M20 2v6"/><path d="M20 8C34 22 31 45 20 61C9 45 6 22 20 8Z"/><path d="M20 13V57M20 25L14 19M20 25L26 19M20 37L13 30M20 37L27 30M20 48L15 42M20 48L25 42" opacity=".5"/></svg>',
+  recta:'<svg class="w" viewBox="0 0 64 40"><path d="M4 5H60"/>'+[10,21,32,43,54].map(x=>`<path d="M${x} 5V26"/><path d="M${x} 26l-2.5 4.5L${x} 36l2.5-5.5Z"/>`).join('')+'</svg>',
+  zigzag:'<svg class="w" viewBox="0 0 64 40"><path d="M4 5H60"/>'+[10,21,32,43,54].map((x,i)=>{const y=i%2?16:26;return `<path d="M${x} 5V${y}"/><path d="M${x} ${y}l-2.5 4.5L${x} ${y+10}l2.5-5.5Z"/>`;}).join('')+'</svg>',
+  '1 perforación':'<svg viewBox="0 0 40 64"><rect x="15" y="5" width="10" height="55" rx="1"/><circle cx="20" cy="10" r="1.8"/><path d="M20 15V56" opacity=".4"/></svg>',
+  '2 perforaciones':'<svg viewBox="0 0 40 64"><rect x="15" y="5" width="10" height="55" rx="1"/><circle cx="20" cy="10" r="1.8"/><circle cx="20" cy="55" r="1.8"/><path d="M20 15V50" opacity=".4"/></svg>',
+  finito:'<svg class="w" viewBox="0 0 64 40"><ellipse cx="32" cy="20" rx="26" ry="9" style="stroke-width:1.2"/></svg>',
+  gruesito:'<svg class="w" viewBox="0 0 64 40"><ellipse cx="32" cy="20" rx="26" ry="9" style="stroke-width:3"/></svg>',
+  grueso:'<svg class="w" viewBox="0 0 64 40"><ellipse cx="32" cy="20" rx="26" ry="9" style="stroke-width:5.2"/></svg>'
+};
+const TAM=[15,20,25,30,35,40,50,60,70,80,100,120];
+const near=v=>TAM.reduce((a,b)=>Math.abs(b-v)<Math.abs(a-v)?b:a);
+const lbl=v=>v>=100?(v/100).toFixed(v%100?2:0).replace('.',',')+' m':v+' cm';
+const $=id=>document.getElementById(id);
+const num=id=>parseFloat(String($(id).value).replace(',','.'))||0;
+const n=v=>v.toLocaleString('es-AR');
+const LUGAR={mesa:'sobre la mesa',ambiente:'centro del ambiente',pasillo:'pasillo, cocina o barra',velador:'mesa de luz'};
+const st={lugar:'',cairel:'',disp:'',plaq:'',perf:'',grosor:'',color:'',entrega:''};
+let base=null, sugDiam=0;
+
+$('diam').insertAdjacentHTML('beforeend',TAM.map(v=>`<option value="${v}">${lbl(v)}</option>`).join(''));
+document.querySelectorAll('.chips[data-svg] .chip').forEach(b=>b.insertAdjacentHTML('afterbegin',SVG[b.dataset.v]||''));
+document.querySelectorAll('.chips[data-k]').forEach(g=>{
+  const k=g.dataset.k;
+  g.querySelectorAll('.chip').forEach(b=>{
+    b.type='button'; b.setAttribute('aria-pressed','false');
+    b.addEventListener('click',()=>{
+      st[k]=st[k]===b.dataset.v?'':b.dataset.v;
+      g.querySelectorAll('.chip').forEach(o=>o.setAttribute('aria-pressed',String(o.dataset.v===st[k])));
+      armar();
+    });
+  });
+});
+$('pasosCfg').addEventListener('input',armar);
+$('baseX').addEventListener('click',()=>{base=null;armar();});
+
+// desde el catálogo: «A tu medida» arranca la ficha con ese modelo
+function personalizar(id){
+  const d=C.p[id]; base=id;
+  const m=d.full.match(/(\d+(?:,\d+)?)\s*(cm|mt|metros?|m)?\b/i);
+  if(m){ let v=parseFloat(m[1].replace(',','.')); if(!/cm/i.test(m[2]||'')) v=v<10?v*100:v; $('diam').value=String(near(v)); }
+  const p=d.full.match(/(\d)\s*(?:pisos?|p)\b/i)||(/dos pisos/i.test(d.full)?[0,2]:/tres pisos/i.test(d.full)?[0,3]:null);
+  $('pisos').value=p?String(p[1]):(/velador|\b1 piso/i.test(d.full)?'1':'');
+  armar();
+  $('armar').scrollIntoView({behavior:'smooth'});
+}
+gridEl.addEventListener('click',e=>{
+  const a=e.target.closest('a[data-armar]'); if(!a) return;
+  e.preventDefault(); personalizar(a.dataset.armar);
+});
+
+function sugerencia(){
+  const t=num('techo'); let s='',alto=''; sugDiam=0;
+  if(st.lugar==='mesa'){
+    const an=num('mesaAncho'), la=num('mesaLargo');
+    if(la>=170){ s=`Para una mesa de ${la} cm de largo luce una rectangular u ovalada de unos ${Math.round(la*.55/10)*10} cm (en el catálogo hay de 1 m y 1,20 m), o dos redondas${an?' de '+lbl(near(an*.5)):''} en línea.`; }
+    else if(an){ const a=near(an*.5), b=near(an*.66); sugDiam=b; s=`Para una mesa de ${an} cm de ancho: ${a===b?'unos '+lbl(a):'entre '+lbl(a)+' y '+lbl(b)} de diámetro.`; }
+    if(t){ const q=t-75-80; alto=q>=25?`La base va a unos 80 cm de la mesa: entre el techo y la base quedan ~${q} cm para la lámpara y la cadena.`:'Con ese techo conviene un modelo de 1 piso, con la cadena corta.'; }
+  }else if(st.lugar==='ambiente'){
+    const la=num('ambLargo'), an=num('ambAncho');
+    if(la&&an){ sugDiam=near((la+an)*8.3); s=`Para un ambiente de ${n(la)} × ${n(an)} m: unos ${lbl(sugDiam)} de diámetro.`; }
+    if(t){ const q=t-210; alto=q>=25?`Para pasar cómodo por debajo (2,10 m libres) quedan ~${q} cm para la lámpara y la cadena.`:'Con ese techo conviene un modelo de 1 piso, pegado al techo.'; }
+  }else if(st.lugar==='pasillo'){
+    s='En pasillos van bien las de 15 a 25 cm. Sobre una mesada o una barra, varias chicas en línea, como el Trío Condesa con chapón.';
+  }else if(st.lugar==='velador'){
+    s='Para la mesa de luz están los veladores de 15, 20 y 25 cm: mirá la pestaña Veladores del catálogo.';
+  }
+  const txt=[s,alto].filter(Boolean).join(' ');
+  $('sug').innerHTML=txt?esc(txt)+(sugDiam&&String(sugDiam)!==$('diam').value?` <button type="button" class="chip txt" id="usarDiam" style="display:inline-flex;margin-left:6px;padding:4px 10px;">Usar ${lbl(sugDiam)}</button>`:'')+'<small>Guía orientativa: la medida final se define en la asesoría con el taller.</small>':'';
+  const u=$('usarDiam'); if(u) u.addEventListener('click',()=>{$('diam').value=String(sugDiam);armar();});
+}
+
+function armar(){
+  document.querySelectorAll('#medidas [data-para]').forEach(f=>f.hidden=f.dataset.para!==st.lugar);
+  $('techo').closest('.fld').hidden=st.lugar==='velador';
+  $('plaqOpts').hidden=!st.plaq||st.plaq==='no';
+  $('destino').hidden=st.entrega!=='envio';
+  sugerencia();
+
+  const d=base&&C.p[base], t=num('techo'), diam=+$('diam').value, pisos=+$('pisos').value;
+  const bx=$('base'); bx.hidden=!d;
+  if(d){ bx.querySelector('img').src=d.img; bx.querySelector('span').textContent=`${d.full} · ${fmt(d.p)}`; }
+  let med=[];
+  if(t&&st.lugar!=='velador') med.push(`techo ${t} cm`);
+  if(st.lugar==='mesa'&&(num('mesaAncho')||num('mesaLargo'))) med.push(`mesa ${num('mesaAncho')||'?'} × ${num('mesaLargo')||'?'} cm`);
+  if(st.lugar==='ambiente'&&(num('ambLargo')||num('ambAncho'))) med.push(`ambiente ${num('ambLargo')?n(num('ambLargo')):'?'} × ${num('ambAncho')?n(num('ambAncho')):'?'} m`);
+  const plaq=st.plaq==='no'?'sin plaquetas':st.plaq?[st.plaq,st.perf,$('plaqLargo').value].filter(Boolean).join(' · '):'';
+  const loc=$('localidad').value.trim();
+  const filas=[
+    d&&['Modelo',`${d.full} (${fmt(d.p)} en la tienda)`],
+    ['Lugar',[LUGAR[st.lugar],med.join(', ')].filter(Boolean).join(' · ')],
+    ['Tamaño',[diam?lbl(diam):'',pisos?pisos+(pisos===1?' piso':' pisos'):''].filter(Boolean).join(' · ')],
+    ['Caireles',[st.cairel,st.disp&&'colgado '+(st.disp==='recta'?'recto':'en zigzag')].filter(Boolean).join(' · ')],
+    ['Plaquetas',plaq],
+    ['Hierro',[st.grosor,st.color].filter(Boolean).join(' · ')],
+    ['Cadena','a medida de tu techo'+(t&&st.lugar!=='velador'?` (${t} cm)`:'')],
+    ['Entrega',st.entrega==='envio'?'encomienda a '+(loc||'tu localidad'):st.entrega==='retiro'?'retiro en el taller':''],
+  ].filter(Boolean);
+  $('fichaDl').innerHTML=filas.map(([k,v])=>`<dt>${k}</dt><dd>${v?esc(v):'<span style="color:var(--ink-mute)">a elegir</span>'}</dd>`).join('');
+
+  const chica=st.lugar==='velador'||(pisos===1&&diam&&diam<=25);
+  const lista=new Date(Date.now()+(chica?20:30)*864e5).toLocaleDateString('es-AR',{day:'numeric',month:'long'});
+  $('plazo').innerHTML=`Si señás hoy, estaría lista alrededor del <b>${lista}</b>`+(chica?' — las chiquitas salen en 20 días o menos.':' — unos 30 días de taller.')+
+    (d&&d.p?`<br>Seña del 50%: <b>${fmt(Math.round(d.p/2))}</b> sobre el precio de la tienda; los cambios pueden moverlo.`:'<br>Se reserva con una seña del 50%; el resto, al terminar.');
+
+  const msg=['Hola 10Mil11! Armé mi lámpara en la web:',...filas.map(([k,v])=>`• ${k}: ${v||'a definir'}`),
+    st.entrega==='retiro'?'¿Me pasan precio y fecha de entrega?':'¿Me pasan precio, fecha de entrega y costo de envío?'].join('\n');
+  $('fichaWa').href=WA+encodeURIComponent(msg);
+  if(typeof reserva==='function') reserva();
+}
+// ── Reserva con seña: Mercado Pago o transferencia, contra la API de la plataforma ──
+// La página nunca manda precios: pide la variante «sena» del ítem y la API calcula
+// el total. Si la API no contesta o el comercio no cobra online, no aparece nada
+// nuevo y la página sigue como antes (WhatsApp).
+const API=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'http://127.0.0.1:3939':'https://api.hg-vl.com';
+const RES={listo:false,formas:[],trf:null,sena:{}};
+let forma='', idem='', enCurso=false;
+Promise.all(['cobro','catalogo'].map(s=>fetch(`${API}/v1/10mil11/${s}`).then(r=>r.ok?r.json():null).catch(()=>null)))
+  .then(([cobro,cat])=>{
+    if(!cobro||!cat||!Array.isArray(cat.items)) return;
+    if((cobro.online||[]).some(o=>o.proveedor==='mercadopago')) RES.formas.push('mp');
+    if(cobro.transferencia) { RES.formas.push('trf'); RES.trf=cobro.transferencia; }
+    cat.items.forEach(it=>{
+      const s=(it.variantes||[]).find(v=>v.slug==='sena'), r=(it.variantes||[]).find(v=>v.slug==='saldo');
+      if(s) RES.sena[it.slug]={sena:s.precio/100,saldo:r?r.precio/100:0};
+    });
+    if(!RES.formas.length||!Object.keys(RES.sena).length) return;
+    RES.listo=true; window.RESERVA=RES;
+    document.querySelectorAll('[data-si-reserva]').forEach(e=>e.hidden=false);
+    $('rFormas').innerHTML=RES.formas.map(f=>`<button type="button" class="chip txt" data-f="${f}" aria-pressed="false">${f==='mp'?'Mercado Pago':'Transferencia'}</button>`).join('');
+    $('rFormas').querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{forma=b.dataset.f;
+      $('rFormas').querySelectorAll('.chip').forEach(o=>o.setAttribute('aria-pressed',String(o===b)));reserva();}));
+    if(RES.formas.length===1){ forma=RES.formas[0]; $('rFormas').firstElementChild.setAttribute('aria-pressed','true'); }
+    renderGrid(); armar();
+  });
+gridEl.addEventListener('click',e=>{
+  const a=e.target.closest('a[data-reservar]'); if(!a) return;
+  e.preventDefault(); personalizar(a.dataset.reservar);
+  setTimeout(()=>$('nombreR').focus({preventScroll:true}),700);
+});
+['nombreR','telR'].forEach(id=>$(id).addEventListener('input',()=>{$('rMsg').textContent='';}));
+
+function reserva(){
+  const d=base&&C.p[base], s=d&&RES.listo&&RES.sena[d.a];
+  $('reserva').hidden=!RES.listo||!!$('rHecha').dataset.codigo;
+  $('rSin').hidden=!!s; $('rCon').hidden=!s;
+  if(!s) return;
+  $('rMonto').innerHTML=`Seña: <b>${fmt(s.sena)}</b> · el resto (${fmt(s.saldo)}) al terminar`;
+  if(MUESTRA){ $('rBtn').textContent='Reservar en www.10mil11.com ↗'; $('rBtn').disabled=false; return; }
+  $('rBtn').textContent=forma==='trf'?'Reservar y ver los datos para transferir':forma==='mp'?'Reservar y pagar con Mercado Pago':'Elegí cómo pagar la seña';
+  $('rBtn').disabled=!forma||enCurso;
+}
+function notaFicha(d){
+  const t=[...document.querySelectorAll('#fichaDl dt')].map(x=>[x.textContent,x.nextElementSibling.textContent])
+    .filter(([k,v])=>k!=='Modelo'&&v!=='a elegir').map(([k,v])=>`${k}: ${v}`).join(' · ');
+  return `Reserva web con seña · ${d.full}${t?' · '+t:''}`.slice(0,500);
+}
+$('rBtn').addEventListener('click',async()=>{
+  // Vitrina: el armado se muestra entero, pero la reserva se toma en el sitio de la marca.
+  if(MUESTRA) { location.href='https://www.10mil11.com/#armar'; return; }
+  const d=base&&C.p[base]; if(!d||!forma||enCurso) return;
+  const nombre=$('nombreR').value.trim(), tel=$('telR').value.trim();
+  if(nombre.length<2) { $('rMsg').textContent='Contanos tu nombre.'; return $('nombreR').focus(); }
+  if(!/^[+0-9 ()-]{8,40}$/.test(tel)) { $('rMsg').textContent='Dejanos un WhatsApp para avisarte (solo números).'; return $('telR').focus(); }
+  enCurso=true; reserva(); $('rMsg').textContent='Reservando…';
+  idem=idem||(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2));
+  const loc=$('localidad').value.trim();
+  const cuerpo={items:[{item:d.a,variante:'sena',cantidad:1}],
+    cliente:{nombre:nombre.slice(0,120),telefono:tel,...(st.entrega==='envio'&&loc?{direccion:loc.slice(0,300)}:{})},
+    nota:notaFicha(d),idem,canal:'web',pago:forma==='mp'?'online':'transferencia',...(st.entrega?{entrega:st.entrega}:{})};
+  try{
+    const r=await fetch(`${API}/v1/10mil11/pedidos`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(cuerpo)});
+    const p=await r.json().catch(()=>({}));
+    if(!r.ok||!p.codigo) throw new Error(p.error||'no pudimos tomar la reserva');
+    if(forma==='mp'){
+      $('rMsg').textContent='Abriendo Mercado Pago…';
+      const q=await fetch(`${API}/v1/10mil11/pedidos/${encodeURIComponent(p.codigo)}/pagar`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({proveedor:'mercadopago'})});
+      const j=await q.json().catch(()=>({}));
+      if(q.ok&&j.url) { location.href=j.url; return; }
+      mostrarHecha(p,d,'mp-fallo');
+    } else mostrarHecha(p,d,'trf');
+  }catch(e){
+    $('rMsg').textContent=`No se pudo reservar (${e.message}). Probá de nuevo o escribinos por WhatsApp.`;
+  }finally{ enCurso=false; reserva(); }
+});
+function mostrarHecha(p,d,modo){
+  const h=$('rHecha'); h.dataset.codigo=p.codigo; idem='';
+  const total=fmt(p.total/100), t=RES.trf||{};
+  const wa=WA+encodeURIComponent(modo==='trf'
+    ?`Hola 10Mil11! Reservé la ${d.full} (código ${p.codigo}) y transferí la seña de ${total}. Te mando el comprobante.`
+    :`Hola 10Mil11! Reservé la ${d.full} (código ${p.codigo}), seña de ${total}, pero no pude pagar con Mercado Pago. ¿Cómo sigo?`);
+  const fila=(k,v)=>v?`<dt>${k}</dt><dd><span>${esc(v)}</span> <button type="button" class="copiar" data-c="${esc(v)}">copiar</button></dd>`:'';
+  h.innerHTML=modo==='trf'
+    ?`<h4>¡Reservada! Código <b>${esc(p.codigo)}</b></h4>
+      <p>Transferí <b>${total}</b> para confirmarla:</p>
+      <dl>${fila('Alias',t.alias)}${fila('CBU',t.cbu)}${t.titular?`<dt>Titular</dt><dd>${esc(t.titular)}</dd>`:''}${t.banco?`<dt>Banco</dt><dd>${esc(t.banco)}</dd>`:''}</dl>
+      ${t.nota?`<p class="fine">${esc(t.nota)}</p>`:''}
+      <button type="button" class="btn solid" id="yaTrf">Ya transferí</button>
+      <a class="btn" href="${wa}" target="_blank" rel="noopener">Mandar el comprobante por WhatsApp</a>
+      <p class="fine" id="trfMsg" role="status">Con la seña confirmada te pasamos la fecha de entrega.</p>`
+    :`<h4>Tu reserva quedó anotada: <b>${esc(p.codigo)}</b></h4>
+      <p>No pudimos abrir Mercado Pago. Escribinos y te pasamos otra forma de pagar la seña de <b>${total}</b>.</p>
+      <a class="btn solid" href="${wa}" target="_blank" rel="noopener">Seguir por WhatsApp</a>`;
+  h.hidden=false; $('reserva').hidden=true;
+  h.querySelectorAll('.copiar').forEach(b=>b.addEventListener('click',()=>{
+    (navigator.clipboard?navigator.clipboard.writeText(b.dataset.c):Promise.reject()).then(()=>{b.textContent='copiado';setTimeout(()=>b.textContent='copiar',1500);}).catch(()=>{});
+  }));
+  const y=$('yaTrf');
+  if(y) y.addEventListener('click',async()=>{
+    y.disabled=true;
+    const r=await fetch(`${API}/v1/10mil11/pedidos/${encodeURIComponent(p.codigo)}/transferencia`,{method:'POST'}).catch(()=>null);
+    $('trfMsg').textContent=r&&r.ok?'¡Gracias! Lo confirmamos apenas veamos la transferencia.':'No pudimos avisar: mandanos el comprobante por WhatsApp.';
+    if(!(r&&r.ok)) y.disabled=false;
+  });
+  h.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+armar();
+})();
+document.getElementById('allOn').addEventListener('click',function(){
+  showroom=!showroom;this.classList.toggle('on',showroom);this.setAttribute('aria-pressed',showroom);
+  this.childNodes[1].textContent=showroom?'Apagar showroom':'Encender showroom';
+  gridEl.classList.toggle('showroom',showroom);
+  gridEl.querySelectorAll('.prod').forEach(p=>{if(!showroom)p._tap=false;p._sync();});
+});
+
+// la linterna sigue al cursor
+const torch=document.getElementById('torch');
+addEventListener('pointermove',e=>{torch.style.setProperty('--tx',e.clientX+'px');torch.style.setProperty('--ty',e.clientY+'px');},{passive:true});
+
+// polvo de luz del hero (canvas 2D liviano)
+(function(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv=document.getElementById('dust'),ctx=cv.getContext('2d');
+  let W,H,P=[];const N=70;
+  function rs(){const r=cv.parentElement.getBoundingClientRect();W=cv.width=r.width;H=cv.height=r.height;}
+  addEventListener('resize',rs);rs();
+  for(let i=0;i<N;i++)P.push({x:Math.random()*W,y:Math.random()*H,r:.6+Math.random()*1.7,s:.08+Math.random()*.3,ph:Math.random()*6.28});
+  (function tick(t){
+    ctx.clearRect(0,0,W,H);
+    for(const p of P){
+      p.y-=p.s;p.x+=Math.sin(t/1800+p.ph)*.14;
+      if(p.y<-4){p.y=H+4;p.x=Math.random()*W;}
+      const a=.12+.22*Math.abs(Math.sin(t/900+p.ph));
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.29);
+      ctx.fillStyle=`rgba(255,200,120,${a})`;ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  })(0);
+})();
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:0,rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+// loops reales del IG: reproducir solo a la vista; retomar al volver la pestaña
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  const vio=new IntersectionObserver(es=>es.forEach(e=>{
+    const v=e.target; v.dataset.inview=e.isIntersecting?'1':'';
+    if(e.isIntersecting){ v.play().catch(()=>{}); } else { v.pause(); }
+  }),{threshold:.25});
+  document.querySelectorAll('video.loop').forEach(v=>vio.observe(v));
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden) document.querySelectorAll('video.loop[data-inview="1"]').forEach(v=>v.play().catch(()=>{}));
+  });
+}
+</script>
+<script>
+// El chat: en el sitio oficial habla como 10Mil11 (no como demo) y su chat-ia.js
+// está al lado; en la vitrina es el de las demos, una carpeta más arriba.
+window.DEMO_CHAT=Object.assign({"demo":"10mil11","negocio":"10Mil11 — Lámparas con Amor","rubro":"lámparas de hierro y caireles hechas a mano","rol":"vendedor","objetivo":"producto","whatsapp":"5492214545088","color":"#d3a95e","datos":"10Mil11 · Lámparas con Amor hace lámparas de hierro y caireles a mano en La Plata: se corta, se pinta y se viste cairel por cairel en el taller. Cómo se compra: asesoría por WhatsApp (el espacio, la altura del techo, el largo de la mesa); seña del 50% por Mercado Pago o transferencia, o en efectivo si está cerca; unos 30 días de taller, a veces 20 y menos las chiquitas, y la fecha prometida se cumple ese día o antes; aviso de lista y saldo del 50%; envío por encomienda a todo el país a cargo del comprador (el costo se cotiza según la localidad) o retiro en el taller. Caireles almendra, péndulo, gotita u hojita; plaquetas de cristal de una o dos perforaciones; hierro finito, gruesito o grueso. En la página se puede reservar con seña un modelo del catálogo y armar una lámpara a medida. No inventes costos de envío, fechas exactas ni modelos que no estén en el catálogo: para eso, derivá al WhatsApp 221 454 5088."},
+  MUESTRA?{}:{"demostracion":false,"firma":"10Mil11 · Lámparas con Amor","etiqueta":"La Plata"});
+(function(){var s=document.createElement('script');s.src=(MUESTRA?'../':'')+'chat-ia.js';s.defer=true;document.body.appendChild(s);})();
+</script>
+</body></html>
