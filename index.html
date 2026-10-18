@@ -434,15 +434,16 @@
         <a class="btn solid" id="fichaWa" href="#" target="_blank" rel="noopener">Mandar la ficha por WhatsApp</a>
         <p class="fine">El taller te confirma precio, fecha y envío. Se reserva con una seña del 50%.</p>
         <div class="reserva" id="reserva" hidden>
-          <h4>Reservala online</h4>
-          <p class="fine" id="rSin">Para reservar con seña, elegí un modelo del catálogo con el botón «Reservar».</p>
+          <h4>Comprala online</h4>
+          <p class="fine" id="rSin">Para comprarla online, elegí un modelo del catálogo con el botón «Comprar».</p>
           <div id="rCon" hidden>
+            <div class="chips" id="rModo"></div>
             <p class="monto" id="rMonto"></p>
             <div class="flds">
               <label class="fld">Tu nombre<input id="nombreR" autocomplete="name" maxlength="120"></label>
               <label class="fld">Tu WhatsApp<input id="telR" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" placeholder="ej. 221 555 0000"></label>
             </div>
-            <span class="sub-l" style="margin-top:12px;">Pagás la seña con</span>
+            <span class="sub-l" style="margin-top:12px;">Pagás con</span>
             <div class="chips" id="rFormas"></div>
             <button type="button" class="btn solid" id="rBtn" disabled>Elegí cómo pagar la seña</button>
             <p class="fine" id="rMsg" role="status" aria-live="polite"></p>
@@ -462,7 +463,7 @@
   </div>
   <ol class="pasos">
     <li class="paso"><b>1</b><h3>Asesoría</h3><p>Por WhatsApp: el espacio, la altura del techo, el largo de la mesa. Definimos modelo, medidas, caireles, hierro y cadena.</p></li>
-    <li class="paso"><b>2</b><h3>Seña del 50%</h3><p>Por transferencia, o en efectivo si estás cerca.<span data-si-reserva hidden> También acá mismo, con el botón «Reservar»: Mercado Pago o transferencia.</span> Con la seña te damos la fecha de entrega.</p></li>
+    <li class="paso"><b>2</b><h3>Seña del 50%</h3><p>Por transferencia, o en efectivo si estás cerca.<span data-si-reserva hidden> También acá mismo, con el botón «Comprar»: pagás el total o la seña con Mercado Pago o transferencia.</span> Con la seña te damos la fecha de entrega.</p></li>
     <li class="paso"><b>3</b><h3>Taller</h3><p>Unos 30 días; a veces 20, y las chiquitas salen antes. Se corta, se pinta y se viste cairel por cairel.</p></li>
     <li class="paso"><b>4</b><h3>Lista</h3><p>Te avisamos que está terminada y abonás el 50% restante.</p></li>
     <li class="paso"><b>5</b><h3>Entrega</h3><p>Por encomienda a cualquier punto del país, a cargo del comprador, o la retirás en el taller.</p></li>
@@ -581,7 +582,7 @@ function renderGrid(){
         <div class="d">${esc(d.s)}</div>
         <div class="links">
           <a class="wa" href="${WA}${msg}" target="_blank" rel="noopener">WhatsApp →</a>
-          ${window.RESERVA&&RESERVA.sena[d.a]?`<a class="wa res" href="#armar" data-reservar="${esc(id)}">Reservar ✦</a>`:''}
+          ${window.RESERVA&&RESERVA.precios[d.a]?`<a class="wa res" href="#armar" data-reservar="${esc(id)}">Comprar ✦</a>`:''}
           <a class="wa" href="#armar" data-armar="${esc(id)}">A tu medida</a>
           <a class="wa" href="${esc(d.url)}" target="_blank" rel="noopener">En la tienda ↗</a>
         </div>
@@ -718,23 +719,23 @@ function armar(){
   $('fichaWa').href=WA+encodeURIComponent(msg);
   if(typeof reserva==='function') reserva();
 }
-// ── Reserva con seña: Mercado Pago o transferencia, contra la API de la plataforma ──
-// La página nunca manda precios: pide la variante «sena» del ítem y la API calcula
-// el total. Si la API no contesta o el comercio no cobra online, no aparece nada
+// ── Compra online: el total o la seña, por Mercado Pago o transferencia, contra la API ──
+// La página nunca manda precios: pide la variante «total» o «sena» del ítem y la API
+// calcula lo que se cobra. Si la API no contesta o el comercio no cobra online, no aparece nada
 // nuevo y la página sigue como antes (WhatsApp).
 const API=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'http://127.0.0.1:3939':'https://api.hg-vl.com';
-const RES={listo:false,formas:[],trf:null,sena:{}};
-let forma='', idem='', enCurso=false;
+const RES={listo:false,formas:[],trf:null,precios:{}};
+let forma='', modo='total', idem='', enCurso=false;
 Promise.all(['cobro','catalogo'].map(s=>fetch(`${API}/v1/10mil11/${s}`).then(r=>r.ok?r.json():null).catch(()=>null)))
   .then(([cobro,cat])=>{
     if(!cobro||!cat||!Array.isArray(cat.items)) return;
     if((cobro.online||[]).some(o=>o.proveedor==='mercadopago')) RES.formas.push('mp');
     if(cobro.transferencia) { RES.formas.push('trf'); RES.trf=cobro.transferencia; }
     cat.items.forEach(it=>{
-      const s=(it.variantes||[]).find(v=>v.slug==='sena'), r=(it.variantes||[]).find(v=>v.slug==='saldo');
-      if(s) RES.sena[it.slug]={sena:s.precio/100,saldo:r?r.precio/100:0};
+      const v=Object.fromEntries((it.variantes||[]).map(x=>[x.slug,x.precio/100]));
+      if(v.total||v.sena) RES.precios[it.slug]={total:v.total||0,sena:v.sena||0,saldo:v.saldo||0};
     });
-    if(!RES.formas.length||!Object.keys(RES.sena).length) return;
+    if(!RES.formas.length||!Object.keys(RES.precios).length) return;
     RES.listo=true; window.RESERVA=RES;
     document.querySelectorAll('[data-si-reserva]').forEach(e=>e.hidden=false);
     $('rFormas').innerHTML=RES.formas.map(f=>`<button type="button" class="chip txt" data-f="${f}" aria-pressed="false">${f==='mp'?'Mercado Pago':'Transferencia'}</button>`).join('');
@@ -751,19 +752,27 @@ gridEl.addEventListener('click',e=>{
 ['nombreR','telR'].forEach(id=>$(id).addEventListener('input',()=>{$('rMsg').textContent='';}));
 
 function reserva(){
-  const d=base&&C.p[base], s=d&&RES.listo&&RES.sena[d.a];
+  const d=base&&C.p[base], s=d&&RES.listo&&RES.precios[d.a];
   $('reserva').hidden=!RES.listo||!!$('rHecha').dataset.codigo;
   $('rSin').hidden=!!s; $('rCon').hidden=!s;
   if(!s) return;
-  $('rMonto').innerHTML=`Seña: <b>${fmt(s.sena)}</b> · el resto (${fmt(s.saldo)}) al terminar`;
-  if(MUESTRA){ $('rBtn').textContent='Reservar en 10mil11.com ↗'; $('rBtn').disabled=false; return; }
-  $('rBtn').textContent=forma==='trf'?'Reservar y ver los datos para transferir':forma==='mp'?'Reservar y pagar con Mercado Pago':'Elegí cómo pagar la seña';
+  const modos=[s.total&&'total',s.sena&&'sena'].filter(Boolean);
+  if(!modos.includes(modo)) modo=modos[0];
+  $('rModo').innerHTML=modos.length>1?modos.map(m=>`<button type="button" class="chip txt" data-m="${m}" aria-pressed="${m===modo}">${m==='total'?'Pago total':'Seña 50%'}</button>`).join(''):'';
+  $('rModo').querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{modo=b.dataset.m;reserva();}));
+  $('rMonto').innerHTML=modo==='total'
+    ?`Total: <b>${fmt(s.total)}</b> · lista en unos 30 días`
+    :`Seña: <b>${fmt(s.sena)}</b> · el resto (${fmt(s.saldo)}) al terminar`;
+  if(MUESTRA){ $('rBtn').textContent='Comprar en 10mil11.com ↗'; $('rBtn').disabled=false; return; }
+  $('rBtn').textContent=modo==='total'
+    ?(forma==='mp'?`Pagar ${fmt(s.total)} con Mercado Pago`:forma==='trf'?'Comprar y ver los datos para transferir':'Elegí cómo pagar')
+    :(forma==='mp'?'Reservar y pagar la seña con Mercado Pago':forma==='trf'?'Reservar y ver los datos para transferir':'Elegí cómo pagar la seña');
   $('rBtn').disabled=!forma||enCurso;
 }
 function notaFicha(d){
   const t=[...document.querySelectorAll('#fichaDl dt')].map(x=>[x.textContent,x.nextElementSibling.textContent])
     .filter(([k,v])=>k!=='Modelo'&&v!=='a elegir').map(([k,v])=>`${k}: ${v}`).join(' · ');
-  return `Reserva web con seña · ${d.full}${t?' · '+t:''}`.slice(0,500);
+  return `${modo==='total'?'Compra web (pago total)':'Reserva web con seña'} · ${d.full}${t?' · '+t:''}`.slice(0,500);
 }
 $('rBtn').addEventListener('click',async()=>{
   // Vitrina: el armado se muestra entero, pero la reserva se toma en el sitio de la marca.
@@ -772,16 +781,16 @@ $('rBtn').addEventListener('click',async()=>{
   const nombre=$('nombreR').value.trim(), tel=$('telR').value.trim();
   if(nombre.length<2) { $('rMsg').textContent='Contanos tu nombre.'; return $('nombreR').focus(); }
   if(!/^[+0-9 ()-]{8,40}$/.test(tel)) { $('rMsg').textContent='Dejanos un WhatsApp para avisarte (solo números).'; return $('telR').focus(); }
-  enCurso=true; reserva(); $('rMsg').textContent='Reservando…';
+  enCurso=true; reserva(); $('rMsg').textContent=modo==='total'?'Tomando tu compra…':'Reservando…';
   idem=idem||(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2));
   const loc=$('localidad').value.trim();
-  const cuerpo={items:[{item:d.a,variante:'sena',cantidad:1}],
+  const cuerpo={items:[{item:d.a,variante:modo,cantidad:1}],
     cliente:{nombre:nombre.slice(0,120),telefono:tel,...(st.entrega==='envio'&&loc?{direccion:loc.slice(0,300)}:{})},
     nota:notaFicha(d),idem,canal:'web',pago:forma==='mp'?'online':'transferencia',...(st.entrega?{entrega:st.entrega}:{})};
   try{
     const r=await fetch(`${API}/v1/10mil11/pedidos`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(cuerpo)});
     const p=await r.json().catch(()=>({}));
-    if(!r.ok||!p.codigo) throw new Error(p.error||'no pudimos tomar la reserva');
+    if(!r.ok||!p.codigo) throw new Error(p.error||'no pudimos tomar el pedido');
     if(forma==='mp'){
       $('rMsg').textContent='Abriendo Mercado Pago…';
       const q=await fetch(`${API}/v1/10mil11/pedidos/${encodeURIComponent(p.codigo)}/pagar`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({proveedor:'mercadopago'})});
@@ -790,26 +799,27 @@ $('rBtn').addEventListener('click',async()=>{
       mostrarHecha(p,d,'mp-fallo');
     } else mostrarHecha(p,d,'trf');
   }catch(e){
-    $('rMsg').textContent=`No se pudo reservar (${e.message}). Probá de nuevo o escribinos por WhatsApp.`;
+    $('rMsg').textContent=`No se pudo completar (${e.message}). Probá de nuevo o escribinos por WhatsApp.`;
   }finally{ enCurso=false; reserva(); }
 });
-function mostrarHecha(p,d,modo){
+function mostrarHecha(p,d,via){
   const h=$('rHecha'); h.dataset.codigo=p.codigo; idem='';
-  const total=fmt(p.total/100), t=RES.trf||{};
-  const wa=WA+encodeURIComponent(modo==='trf'
-    ?`Hola 10Mil11! Reservé la ${d.full} (código ${p.codigo}) y transferí la seña de ${total}. Te mando el comprobante.`
-    :`Hola 10Mil11! Reservé la ${d.full} (código ${p.codigo}), seña de ${total}, pero no pude pagar con Mercado Pago. ¿Cómo sigo?`);
+  const total=fmt(p.total/100), t=RES.trf||{}, compra=modo==='total';
+  const que=compra?`Compré la ${d.full} (código ${p.codigo})`:`Reservé la ${d.full} (código ${p.codigo})`;
+  const wa=WA+encodeURIComponent(via==='trf'
+    ?`Hola 10Mil11! ${que} y transferí ${compra?'':'la seña de '}${total}. Te mando el comprobante.`
+    :`Hola 10Mil11! ${que}, ${compra?'':'seña de '}${total}, pero no pude pagar con Mercado Pago. ¿Cómo sigo?`);
   const fila=(k,v)=>v?`<dt>${k}</dt><dd><span>${esc(v)}</span> <button type="button" class="copiar" data-c="${esc(v)}">copiar</button></dd>`:'';
-  h.innerHTML=modo==='trf'
-    ?`<h4>¡Reservada! Código <b>${esc(p.codigo)}</b></h4>
-      <p>Transferí <b>${total}</b> para confirmarla:</p>
+  h.innerHTML=via==='trf'
+    ?`<h4>${compra?'¡Listo!':'¡Reservada!'} Código <b>${esc(p.codigo)}</b></h4>
+      <p>Transferí <b>${total}</b> para confirmar${compra?' la compra':'la'}:</p>
       <dl>${fila('Alias',t.alias)}${fila('CBU',t.cbu)}${t.titular?`<dt>Titular</dt><dd>${esc(t.titular)}</dd>`:''}${t.banco?`<dt>Banco</dt><dd>${esc(t.banco)}</dd>`:''}</dl>
       ${t.nota?`<p class="fine">${esc(t.nota)}</p>`:''}
       <button type="button" class="btn solid" id="yaTrf">Ya transferí</button>
       <a class="btn" href="${wa}" target="_blank" rel="noopener">Mandar el comprobante por WhatsApp</a>
-      <p class="fine" id="trfMsg" role="status">Con la seña confirmada te pasamos la fecha de entrega.</p>`
-    :`<h4>Tu reserva quedó anotada: <b>${esc(p.codigo)}</b></h4>
-      <p>No pudimos abrir Mercado Pago. Escribinos y te pasamos otra forma de pagar la seña de <b>${total}</b>.</p>
+      <p class="fine" id="trfMsg" role="status">Con ${compra?'el pago':'la seña'} confirmad${compra?'o':'a'} te pasamos la fecha de entrega.</p>`
+    :`<h4>Tu ${compra?'compra':'reserva'} quedó anotada: <b>${esc(p.codigo)}</b></h4>
+      <p>No pudimos abrir Mercado Pago. Escribinos y te pasamos otra forma de pagar ${compra?'los':'la seña de'} <b>${total}</b>.</p>
       <a class="btn solid" href="${wa}" target="_blank" rel="noopener">Seguir por WhatsApp</a>`;
   h.hidden=false; $('reserva').hidden=true;
   h.querySelectorAll('.copiar').forEach(b=>b.addEventListener('click',()=>{
