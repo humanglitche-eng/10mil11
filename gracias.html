@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin">
+<script>window.medir=window.medir||function(){(window.medir.q=window.medir.q||[]).push(arguments)};</script>
+<script defer src="analitica.js"></script>
 <title>Gracias por tu compra · 10Mil11 — Lámparas con Amor</title>
 <meta name="robots" content="noindex">
 <!--
@@ -106,6 +109,11 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const fmt=v=>'$ '+Number(v).toLocaleString('es-AR');
 const pedir=(ruta,op)=>fetch(`${API}/v1/10mil11${ruta}`,op).then(r=>r.ok?r.json():Promise.reject(r.status));
 let local={}; try{ local=JSON.parse(sessionStorage.getItem('10mil11:'+P)||'{}')||{}; }catch(_){}
+// Cómo terminó la compra, una vez por pedido y estado (recargar no vuelve a contar). Nunca el código.
+function resultado(estado){
+  const k='m11:'+P+':'+estado; try{ if(sessionStorage.getItem(k)) return; sessionStorage.setItem(k,'1'); }catch(_){}
+  medir('resultado',{estado,modo:local.modo||'',pago:VIA||local.forma||'',modelo:local.n||''});
+}
 
 function decir(est,clase,titulo,lead){
   $('gEst').textContent=est; $('gEst').className='estado'+(clase?' '+clase:'');
@@ -143,6 +151,7 @@ async function arrancar(){
   let g=await pago();
   if(g&&g.pagado) return pagado(sena,envio);
   if(R==='no'){
+    resultado('rechazado');
     decir('El pago no se completó','bad','No se pudo completar el pago',`Tu pedido <b>${esc(P)}</b> quedó anotado, pero el pago no se hizo. Podés probar de nuevo o escribirnos.`);
     $('gCaja').innerHTML=`<button class="btn solid" id="gReint" type="button">Probar de nuevo con Mercado Pago</button><p class="fine" id="gReMsg"></p>`;
     $('gCaja').hidden=false;
@@ -150,6 +159,7 @@ async function arrancar(){
     return;
   }
   if(R==='pendiente'){
+    resultado('pendiente');
     decir('Pago pendiente','','Tu pago está en camino',`Si elegiste pagar en efectivo, acercate con el cupón a Pago Fácil o Rapipago. Apenas se acredite, te avisamos por WhatsApp. Tu pedido es <b>${esc(P)}</b>.`);
     pasos(sena,envio); return;
   }
@@ -158,13 +168,16 @@ async function arrancar(){
     pasos(sena,envio);
     for(let i=0;i<10&&!(g&&g.pagado);i++){ await new Promise(r=>setTimeout(r,2500)); g=await pago(); }
     if(g&&g.pagado) return pagado(sena,envio);
+    resultado('aprobado');
     $('gL').innerHTML=`Mercado Pago aprobó tu pago y nos lo confirma en unos minutos: no hace falta que hagas nada más. Tu pedido es <b>${esc(P)}</b>.`;
     return;
   }
+  resultado('anotado');
   decir('Pedido anotado','','Tu pedido está anotado',`Tu código es <b>${esc(P)}</b>. Si todavía no lo pagaste, escribinos por WhatsApp.`);
 }
 
 function pagado(sena,envio){
+  resultado('pagado');
   decir('Pago recibido','ok','¡Gracias por <i>tu compra</i>!',sena
     ?`Recibimos la seña. Tu lámpara ya está reservada: pedido <b>${esc(P)}</b>.`
     :`Recibimos tu pago. Tu lámpara ya entra al taller: pedido <b>${esc(P)}</b>.`);
@@ -172,6 +185,7 @@ function pagado(sena,envio){
 }
 
 async function transferencia(p,l,total,sena,envio){
+  resultado('transferencia');
   decir(sena?'Seña por transferencia':'Pago por transferencia','','¡Gracias por <i>tu compra</i>!',`Para confirmarla, transferí <b>${fmt(total)}</b> a estos datos. Tu pedido es <b>${esc(P)}</b>.`);
   let t={}; try{ t=(await pedir('/cobro')).transferencia||{}; }catch(_){}
   const fila=(k,v,ver)=>v?`<dt>${k}</dt><dd><span>${esc(ver||v)}</span> <button type="button" class="copiar" data-c="${esc(v)}">copiar</button></dd>`:'';

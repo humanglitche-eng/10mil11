@@ -15,5 +15,12 @@ hechas a mano en La Plata. HTML estático, lo publica GitHub Pages con cada push
 - **Vitrina**: la misma página se muestra en `demos.hg-vl.com/demo-10mil11`. Allí
   `MUESTRA` es true: se ve la etiqueta de demo y la reserva lleva a este sitio (la
   API no acepta pedidos desde una vitrina). **Se edita acá** y se copia a la vitrina.
+- **Analítica** (`analitica.js`): Umami Cloud, sin cookies ni banner. Visitas por página y
+  el camino de compra: `producto` → `comprar` → `pedido` → `resultado` (en gracias.html),
+  más clics a WhatsApp (con la sección de donde salió), chat, inmersiva, Instagram y
+  tienda Nube. Las páginas llaman a `medir('evento', {…})`; un stub en el `<head>` las
+  encola hasta que carga. Solo cuenta en `www.10mil11.com`/`10mil11.com` y con un
+  `WEBSITE_ID` real: en la vitrina y en localhost no carga nada. Nunca manda el código
+  del pedido (gracias.html excluye la query y su referrer sale sin ella).
 
 Hecho por Human Glitche · Visual Lab.

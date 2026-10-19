@@ -38,6 +38,8 @@
 <link rel="icon" href="img/logo.jpg">
 <link rel="canonical" href="https://www.10mil11.com/">
 <script>window.MUESTRA=['demos.hg-vl.com','0800webs.com'].includes(location.hostname);document.documentElement.classList.toggle('muestra',MUESTRA);</script>
+<script>window.medir=window.medir||function(){(window.medir.q=window.medir.q||[]).push(arguments)};</script>
+<script defer src="analitica.js"></script>
 <style>
   :root{
     --bg:#0b0907; --bg2:#131009; --ink:#f4ecdd; --ink-dim:rgba(244,236,221,.62);
@@ -851,6 +853,7 @@ const RES={listo:false,formas:[],trf:null,precios:{}};
 const $=id=>document.getElementById(id);
 const dlg=$('pv'), fz=$('pvFoto');
 let id=null, foto=0, modo='total', forma='', entrega='', idem='', enCurso=false;
+let medidoForm='';   // analítica: «comprar» una vez por ficha abierta (desdeHash puede volver a pasar)
 
 // Qué se puede cobrar. Si la API no contesta, la ventana igual se abre y ofrece WhatsApp.
 Promise.all(['cobro','catalogo'].map(s=>fetch(`${API}/v1/10mil11/${s}`).then(r=>r.ok?r.json():null).catch(()=>null)))
@@ -884,6 +887,7 @@ gridEl.addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.matches('.pr
 function abrir(pid,comprar){
   if(!C.p[pid]) return;
   if(pid!==id){ idem=''; foto=0; $('pvMsg').textContent=''; }
+  if(pid!==id||!dlg.open) medir('producto',{modelo:C.p[pid].full});
   id=pid; pintar(); paso(comprar&&RES.listo?'form':'ficha');
   if(!dlg.open){ dlg.showModal(); document.body.classList.add('con-pv'); }
   // Si se pidió comprar y la API todavía no contestó, el hash lo recuerda: cuando conteste, va al formulario.
@@ -891,7 +895,7 @@ function abrir(pid,comprar){
 }
 function cerrar(){ if(dlg.open) dlg.close(); }
 dlg.addEventListener('close',()=>{
-  document.body.classList.remove('con-pv'); fz.classList.remove('zoom');
+  document.body.classList.remove('con-pv'); fz.classList.remove('zoom'); medidoForm='';
   if(/^#(producto|comprar)=/.test(location.hash)) history.replaceState(null,'',location.pathname+location.search);
 });
 $('pvX').addEventListener('click',cerrar);
@@ -947,6 +951,7 @@ function pintar(){
 }
 function paso(p){
   $('pvFicha').hidden=p!=='ficha'; $('pvForm').hidden=p!=='form';
+  if(p==='form'&&C.p[id]&&medidoForm!==id){ medidoForm=id; medir('comprar',{modelo:C.p[id].full}); }
   if(p==='form'&&!matchMedia('(pointer:coarse)').matches) setTimeout(()=>$('fNom').focus({preventScroll:true}),60);
   if(p==='form'&&matchMedia('(max-width:860px)').matches) setTimeout(()=>$('pvForm').scrollIntoView({block:'start'}),60);
 }
@@ -998,6 +1003,7 @@ $('pvForm').addEventListener('submit',async e=>{
     const p=await r.json().catch(()=>({}));
     if(!r.ok||!p.codigo) throw new Error(p.error||'no pudimos tomar el pedido');
     try{ sessionStorage.setItem('10mil11:'+p.codigo,JSON.stringify({n:d.full,img:d.img,modo,forma,entrega})); }catch(_){}
+    medir('pedido',{modelo:d.full,modo,pago:forma,entrega});
     gracias.searchParams.set('p',p.codigo);
     if(forma==='mp'){
       msg('Abriendo Mercado Pago…');
@@ -1009,6 +1015,7 @@ $('pvForm').addEventListener('submit',async e=>{
     } else gracias.searchParams.set('via','trf');
     location.href=gracias.href;
   }catch(err){
+    medir('pedido-error',{modelo:d.full});
     msg(`No se pudo completar (${err.message}). Probá de nuevo o escribinos por WhatsApp.`);
   }finally{ enCurso=false; form(); }
 });
