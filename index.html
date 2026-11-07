@@ -311,9 +311,17 @@
   .rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.16,1,.3,1);}
   .rv.in{opacity:1;transform:none;}
   @media(prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none;transition:none;} #torch{display:none;} .prod .ph::after,.prod .ph img{animation:none!important;} }
+  /* franja de cuotas: solo aparece si GoCuotas está prendido en el panel */
+  .cuotas{display:flex;justify-content:center;align-items:baseline;flex-wrap:wrap;gap:2px 10px;padding:9px 16px;background:linear-gradient(90deg,#a87a35,#d3a95e 50%,#a87a35);color:#0b0907;font:400 13.5px/1.35 'Jost',system-ui,sans-serif;letter-spacing:.03em;text-align:center;text-decoration:none;}
+  .cuotas[hidden]{display:none;}
+  .cuotas b{font-weight:600;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;}
+  .cuotas small{font-size:11px;opacity:.72;letter-spacing:.06em;}
+  .cuotas:hover span{text-decoration:underline;text-underline-offset:3px;}
 </style>
 </head>
 <body>
+
+<a class="cuotas" id="cuotasGo" href="#catalogo" hidden><b>3 cuotas sin interés</b><span>con tu tarjeta de débito · GoCuotas</span><small>CFT 0%</small></a>
 
 <div id="torch" aria-hidden="true"></div>
 
@@ -494,7 +502,7 @@
   </div>
   <ol class="pasos">
     <li class="paso"><b>1</b><h3>Asesoría</h3><p>Por WhatsApp: el espacio, la altura del techo, el largo de la mesa. Definimos modelo, medidas, caireles, hierro y cadena.</p></li>
-    <li class="paso"><b>2</b><h3>Seña del 50%</h3><p>Por transferencia, o en efectivo si estás cerca.<span data-si-reserva hidden> También acá mismo, con el botón «Comprar»: pagás el total o la seña con <span id="pasoFormas">Mercado Pago o transferencia</span>.</span> Con la seña te damos la fecha de entrega.</p></li>
+    <li class="paso"><b>2</b><h3>Seña del 50%</h3><p>Por transferencia, o en efectivo si estás cerca.<span data-si-reserva hidden> También acá mismo, con el botón «Comprar»: reservás con la seña por transferencia o pagás el total con <span id="pasoFormas">Mercado Pago o transferencia</span>.</span> Con la seña te damos la fecha de entrega.</p></li>
     <li class="paso"><b>3</b><h3>Taller</h3><p>Hasta 30 días en la mayoría de los casos; depende de cada lámpara. Se corta, se pinta y se viste cairel por cairel.</p></li>
     <li class="paso"><b>4</b><h3>Lista</h3><p>Te avisamos que está terminada y abonás el 50% restante.</p></li>
     <li class="paso"><b>5</b><h3>Entrega</h3><p>Por Vía Cargo a cualquier punto del país, a cargo del comprador (se cotiza según tu localidad), o la retirás en el taller.</p></li>
@@ -565,7 +573,7 @@
         <div class="c-row"><b>WhatsApp</b><a href="https://wa.me/5492214545088?text=Hola%2010Mil11!%20Quiero%20asesorarme%20por%20una%20l%C3%A1mpara." target="_blank" rel="noopener">221 454 5088</a></div>
         <div class="c-row"><b>Instagram</b><a href="https://www.instagram.com/lamparas_10mil11/" target="_blank" rel="noopener">@lamparas_10mil11</a></div>
         <div class="c-row"><b>Tienda online</b><a href="https://lamparasconamor10mil11.mitiendanube.com/" target="_blank" rel="noopener">lamparasconamor10mil11.mitiendanube.com</a></div>
-        <div class="c-row"><b>Envíos y pago</b><span style="color:var(--ink-dim)">Seña del 50% y el resto al terminar: Mercado Pago, cuotas con débito (GoCuotas) o transferencia, o efectivo si estás cerca · Envío por Vía Cargo a todo el país, a cargo del comprador, o retiro en el taller</span></div>
+        <div class="c-row"><b>Envíos y pago</b><span style="color:var(--ink-dim)">Seña del 50% por transferencia (o efectivo si estás cerca) y el resto al terminar, o el total de una vez con Mercado Pago, 3 cuotas sin interés con débito (GoCuotas) o transferencia · Envío por Vía Cargo a todo el país, a cargo del comprador, o retiro en el taller</span></div>
       </div>
     </div>
     <div class="c-photo"><img src="img/hero.jpg" alt="Lámpara encendida al atardecer en el jardín del taller" loading="lazy"></div>
@@ -604,7 +612,7 @@
         <ul class="pv-info">
           <li>Hecha a mano en el taller: lista en hasta 30 días, según cada lámpara.</li>
           <li>Envío por Vía Cargo a todo el país o retiro en el taller, en La Plata.</li>
-          <li>Pagás el total o la reservás con el 50%.</li>
+          <li>Pagás el total o la reservás con el 50% por transferencia.</li>
         </ul>
         <button class="btn solid" id="pvComprar" type="button" hidden>Comprar</button>
         <a class="btn" id="pvWa" href="#" target="_blank" rel="noopener">Consultar por WhatsApp</a>
@@ -622,7 +630,7 @@
         <label class="fld" id="fDirL" hidden>Dirección, localidad y código postal<input id="fDir" autocomplete="street-address" maxlength="300"></label>
         <span class="sub-l">Pagás con</span>
         <div class="chips" id="pvForma"></div>
-        <p class="fine" id="pvGo" hidden>GoCuotas te pide una tarjeta de débito y te valida con un SMS al celular que dejaste arriba.</p>
+        <p class="fine" id="pvGo" hidden>3 cuotas sin interés con débito (CFT 0%, TNA 0%, TEA 0%). GoCuotas te pide la tarjeta y te valida con un SMS al celular que dejaste arriba.</p>
         <p class="pv-tot" id="pvTot"></p>
         <button class="btn solid" id="pvPagar" type="submit">Comprar</button>
         <p class="fine" id="pvMsg" role="status" aria-live="polite"></p>
@@ -850,8 +858,9 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
 'use strict';
 // ── La lámpara: ventana de producto (expositor de fotos) y compra directa ──
 // La foto o el nombre de una tarjeta abren la ventana; «Comprar» va derecho al
-// formulario: nombre, WhatsApp, mail, entrega, total o seña, Mercado Pago,
-// GoCuotas (cuotas con débito) o transferencia: se ofrece lo que el comercio tenga
+// formulario: nombre, WhatsApp, mail, entrega, total o seña. El total se paga con Mercado Pago,
+// GoCuotas (3 cuotas sin interés con débito) o transferencia; la seña, solo por transferencia
+// (regla del owner, 07/11). Se ofrece lo que el comercio tenga
 // prendido en su panel. La página nunca manda precios: pide la variante (`total` o
 // `sena`) y la API calcula lo que se cobra. Mercado Pago devuelve al cliente a
 // gracias.html (`volver`, que la API solo acepta hacia un origen de la marca).
@@ -862,7 +871,9 @@ const SITIO='https://www.10mil11.com/';
 const RES={listo:false,formas:[],trf:null,precios:{}};
 // Las formas que cobra un proveedor: `id` es el de la API. La transferencia no pasa por acá.
 const ONLINE={mp:{id:'mercadopago',nom:'Mercado Pago',chip:'Mercado Pago'},
-              go:{id:'gocuotas',nom:'GoCuotas',chip:'GoCuotas · cuotas con débito'}};
+              go:{id:'gocuotas',nom:'GoCuotas',chip:'GoCuotas · 3 cuotas sin interés'}};
+// Cuotas sin interés de GoCuotas: las que tiene la sucursal. Si cambian, cambiar también la franja de arriba.
+const CUOTAS_GO=3, cuota=v=>fmt(Math.round(v/CUOTAS_GO));
 const $=id=>document.getElementById(id);
 const dlg=$('pv'), fz=$('pvFoto');
 let id=null, foto=0, modo='total', forma='', entrega='', idem='', enCurso=false;
@@ -888,6 +899,7 @@ Promise.all(['cobro','catalogo'].map(s=>fetch(`${API}/v1/10mil11/${s}`).then(r=>
     const noms=RES.formas.map(f=>ONLINE[f]?ONLINE[f].nom:'transferencia');
     $('pasoFormas').textContent=noms.length>1?noms.slice(0,-1).join(', ')+' o '+noms[noms.length-1]:noms[0];
     document.querySelectorAll('[data-si-reserva]').forEach(e=>e.hidden=false);
+    if(RES.formas.includes('go')) $('cuotasGo').hidden=false;
     renderGrid();
     if(id) pintar();
     desdeHash();
@@ -957,7 +969,8 @@ function pintar(){
   const cat=(C.tabs.find(([n,ids])=>n!=='Destacadas'&&n!=='Todos'&&ids.includes(id))||[''])[0];
   $('pvCat').textContent=cat||'Lámparas';
   $('pvN').textContent=d.n; $('pvS').textContent=d.s;
-  $('pvP').innerHTML=fmt(d.p)+(pr&&pr.sena?`<small>o reservala con ${fmt(pr.sena)} (el 50%)</small>`:'');
+  $('pvP').innerHTML=fmt(d.p)+(pr&&pr.total&&RES.formas.includes('go')?`<small>o ${CUOTAS_GO} cuotas sin interés de ${cuota(pr.total)} con débito</small>`:'')
+    +(pr&&pr.sena&&RES.formas.includes('trf')?`<small>o reservala con ${fmt(pr.sena)} (el 50%) por transferencia</small>`:'');
   $('pvWa').href=WA+encodeURIComponent(`Hola 10Mil11! Vi la ${d.full} (${fmt(d.p)}) en la web y quiero saber más.`);
   $('pvComprar').hidden=!pr;
   const fs=fotos(); foto=Math.min(foto,fs.length-1);
@@ -985,15 +998,19 @@ function chips(el,opts,val,set){
 function form(){
   const d=C.p[id], pr=RES.listo&&RES.precios[d.a];
   if(!pr) return;
-  const modos=[pr.total&&'total',pr.sena&&'sena'].filter(Boolean);
+  // La seña va solo por transferencia; Mercado Pago y GoCuotas cobran el total.
+  const modos=[pr.total&&'total',pr.sena&&RES.formas.includes('trf')&&'sena'].filter(Boolean);
   if(!modos.includes(modo)) modo=modos[0];
-  chips($('pvModo'),modos.map(m=>[m,m==='total'?`Pago total · ${fmt(pr.total)}`:`Seña 50% · ${fmt(pr.sena)}`]),modo,v=>modo=v);
+  const formas=modo==='sena'?['trf']:RES.formas;
+  if(!formas.includes(forma)) forma=formas[0];
+  chips($('pvModo'),modos.map(m=>[m,m==='total'?`Pago total · ${fmt(pr.total)}`:`Seña 50% · ${fmt(pr.sena)} · por transferencia`]),modo,v=>{ if(v==='total'&&modo==='sena') forma=RES.formas[0]; modo=v; });
   chips($('pvEnt'),[['envio','Envío a domicilio'],['retiro','Retiro en el taller']],entrega,v=>entrega=v);
-  chips($('pvForma'),RES.formas.map(f=>[f,ONLINE[f]?ONLINE[f].chip:'Transferencia']),forma,v=>forma=v);
+  chips($('pvForma'),formas.map(f=>[f,ONLINE[f]?ONLINE[f].chip:'Transferencia']),forma,v=>forma=v);
   $('pvGo').hidden=forma!=='go';
   $('fDirL').hidden=entrega!=='envio';
   const monto=modo==='total'?pr.total:pr.sena;
-  $('pvTot').innerHTML=modo==='total'?`Total: <b>${fmt(pr.total)}</b>`:`Seña: <b>${fmt(pr.sena)}</b> · el resto (${fmt(pr.saldo)}) cuando esté lista`;
+  $('pvTot').innerHTML=(modo==='total'?`Total: <b>${fmt(pr.total)}</b>`:`Seña: <b>${fmt(pr.sena)}</b> · el resto (${fmt(pr.saldo)}) cuando esté lista`)
+    +(forma==='go'?`<br>En ${CUOTAS_GO} cuotas sin interés de <b>${cuota(monto)}</b>`:'');
   $('pvPagar').textContent=MUESTRA?'Comprar en www.10mil11.com ↗'
     :ONLINE[forma]?`Pagar ${fmt(monto)} con ${ONLINE[forma].nom}`:forma==='trf'?'Confirmar y ver los datos para transferir':'Elegí cómo pagar';
   $('pvPagar').disabled=enCurso;
@@ -1011,6 +1028,7 @@ $('pvForm').addEventListener('submit',async e=>{
   if(!entrega){ msg('Elegí envío a domicilio o retiro en el taller.'); return; }
   if(entrega==='envio'&&dir.length<6){ msg('Para el envío, dejanos dirección, localidad y código postal.'); return $('fDir').focus(); }
   if(!forma){ msg('Elegí cómo pagar.'); return; }
+  if(modo==='sena'&&forma!=='trf'){ msg('La seña va por transferencia: elegí «Transferencia» o pagá el total.'); return; }
   enCurso=true; form(); msg(modo==='total'?'Tomando tu compra…':'Reservando…');
   idem=idem||(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2));
   const cuerpo={items:[{item:d.a,variante:modo,cantidad:1}],
@@ -1047,7 +1065,7 @@ desdeHash();   // al final: abrir usa todo lo de arriba
 <script>
 // El chat: en el sitio oficial habla como 10Mil11 (no como demo) y su chat-ia.js
 // está al lado; en la vitrina es el de las demos, una carpeta más arriba.
-window.DEMO_CHAT=Object.assign({"demo":"10mil11","negocio":"10Mil11 — Lámparas con Amor","rubro":"lámparas de hierro y caireles hechas a mano","rol":"vendedor","objetivo":"producto","whatsapp":"5492214545088","color":"#d3a95e","datos":"10Mil11 · Lámparas con Amor hace lámparas de hierro y caireles a mano en La Plata: se corta, se pinta y se viste cairel por cairel en el taller. Cómo se compra: asesoría por WhatsApp (el espacio, la altura del techo, el largo de la mesa); seña del 50% por Mercado Pago, GoCuotas (cuotas con tarjeta de débito) o transferencia, o en efectivo si está cerca; hasta 30 días de taller en la mayoría de los casos (depende de cada lámpara), y la fecha prometida se cumple ese día o antes; aviso de lista y saldo del 50%; envío por Vía Cargo a todo el país a cargo del comprador (el costo se cotiza según la localidad) o retiro en el taller. Caireles almendra, péndulo, gotita u hojita; plaquetas de cristal de una o dos perforaciones; hierro finito, gruesito o grueso. En la página se compra cada modelo del catálogo pagando el total o una seña del 50%, con Mercado Pago, GoCuotas o transferencia. No inventes costos de envío, fechas exactas ni modelos que no estén en el catálogo: para eso, derivá al WhatsApp 221 454 5088."},
+window.DEMO_CHAT=Object.assign({"demo":"10mil11","negocio":"10Mil11 — Lámparas con Amor","rubro":"lámparas de hierro y caireles hechas a mano","rol":"vendedor","objetivo":"producto","whatsapp":"5492214545088","color":"#d3a95e","datos":"10Mil11 · Lámparas con Amor hace lámparas de hierro y caireles a mano en La Plata: se corta, se pinta y se viste cairel por cairel en el taller. Cómo se compra: asesoría por WhatsApp (el espacio, la altura del techo, el largo de la mesa); seña del 50% por transferencia, o en efectivo si está cerca; el total también se puede pagar de una vez con Mercado Pago o con GoCuotas (3 cuotas sin interés con tarjeta de débito, solo para el pago total); hasta 30 días de taller en la mayoría de los casos (depende de cada lámpara), y la fecha prometida se cumple ese día o antes; aviso de lista y saldo del 50%; envío por Vía Cargo a todo el país a cargo del comprador (el costo se cotiza según la localidad) o retiro en el taller. Caireles almendra, péndulo, gotita u hojita; plaquetas de cristal de una o dos perforaciones; hierro finito, gruesito o grueso. En la página se compra cada modelo del catálogo pagando el total (con Mercado Pago, GoCuotas o transferencia) o una seña del 50% (solo por transferencia). No inventes costos de envío, fechas exactas ni modelos que no estén en el catálogo: para eso, derivá al WhatsApp 221 454 5088."},
   MUESTRA?{}:{"demostracion":false,"firma":"10Mil11 · Lámparas con Amor","etiqueta":"La Plata"});
 (function(){var s=document.createElement('script');s.src=(MUESTRA?'../':'')+'chat-ia.js';s.defer=true;document.body.appendChild(s);})();
 </script>
