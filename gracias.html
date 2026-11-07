@@ -108,6 +108,19 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=v=>'$ '+Number(v).toLocaleString('es-AR');
 const pedir=(ruta,op)=>fetch(`${API}/v1/10mil11${ruta}`,op).then(r=>r.ok?r.json():Promise.reject(r.status));
+// La fecha de entrega es la que se prometió al comprar: va en la nota del pedido («Entrega prometida:
+// dd/mm/aaaa»). Si un pedido viejo no la trae, se cuenta igual que la página: 20 días desde que se hizo.
+const DIAS_ENTREGA=20, ZONA_AR='America/Argentina/Buenos_Aires';
+let FECHA='';
+function fechaDe(p){
+  const m=/Entrega prometida:\s*(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(p.nota||'');
+  let f=m?new Date(Date.UTC(+m[3],m[2]-1,+m[1],15)):null;
+  if(!f&&p.creado&&Number.isFinite(Date.parse(p.creado))){
+    f=new Date(Date.parse(p.creado)+DIAS_ENTREGA*864e5);
+    if(f.toLocaleDateString('en-US',{weekday:'short',timeZone:ZONA_AR})==='Sun') f.setTime(f.getTime()+864e5);
+  }
+  return f?f.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',timeZone:ZONA_AR}).replace(',',''):'';
+}
 let local={}; try{ local=JSON.parse(sessionStorage.getItem('10mil11:'+P)||'{}')||{}; }catch(_){}
 // Quién cobró: GoCuotas lo dice el `via` (o lo que eligió en la ventana de compra).
 const ES_GO=VIA==='go'||(!VIA&&local.forma==='go');
@@ -125,10 +138,11 @@ function decir(est,clase,titulo,lead){
 function wa(t){ $('gWa').href=WA+encodeURIComponent(t); }
 function pasos(sena,envio){
   $('gPasos').innerHTML=[
-    `<b>Te escribimos por WhatsApp</b> para confirmar tu pedido y la fecha de entrega.`,
-    `<b>El taller arma tu lámpara</b>: se corta, se pinta y se viste cairel por cairel. Hasta 30 días en la mayoría de los casos; depende de cada lámpara.`,
+    `<b>Te escribimos por WhatsApp</b> para confirmar tu pedido.`,
+    `<b>El taller arma tu lámpara</b>: se corta, se pinta y se viste cairel por cairel.`,
     sena?`<b>Te avisamos cuando esté lista</b> y abonás el 50% restante.`:`<b>Te avisamos cuando esté lista.</b>`,
-    envio?`<b>Sale por Vía Cargo</b> a la dirección que nos dejaste; el envío se cotiza según tu localidad y se paga aparte.`:`<b>La retirás en el taller</b>, en La Plata: te pasamos la dirección por WhatsApp.`,
+    envio?`<b>Sale por Vía Cargo${FECHA?` el ${FECHA}`:''}</b> a la dirección que nos dejaste; el viaje depende de tu localidad y el envío se cotiza aparte.`
+         :`<b>La retirás en el taller${FECHA?` el ${FECHA}`:''}</b>, en La Plata: te pasamos la dirección por WhatsApp.`,
   ].map(x=>`<li>${x}</li>`).join('');
   $('gSig').hidden=false;
 }
@@ -143,6 +157,7 @@ async function arrancar(){
   catch(e){ decir('Tu compra','bad','No pudimos cargar tu pedido',`Tu código es <b>${esc(P)}</b>. Escribinos por WhatsApp y lo vemos.`); wa(`Hola 10Mil11! Tengo el pedido ${P} y no pude ver la confirmación.`); return; }
   const l=(p.lineas||[])[0]||{}, total=Number(p.total)/100;
   const sena=/seña/i.test(l.etiqueta||''), envio=local.entrega?local.entrega==='envio':/Envío a /.test(p.nota||'');
+  FECHA=fechaDe(p);
   $('gRes').innerHTML=`${local.img?`<img src="${esc(local.img)}" alt="">`:''}<div class="t"><b>${esc(l.nombre||local.n||'Tu lámpara')}</b><span>${esc(l.etiqueta||'')} · pedido ${esc(P)}</span></div><div class="m"><small>${sena?'Seña':'Total'}</small>${fmt(total)}</div>`;
   $('gRes').hidden=false;
   wa(`Hola 10Mil11! Hice el pedido ${P} (${l.nombre||'una lámpara'}, ${fmt(total)}).`);
@@ -197,7 +212,7 @@ async function transferencia(p,l,total,sena,envio){
     ${t.nota?`<p>${esc(t.nota)}</p>`:''}
     <div class="btns"><button class="btn solid" id="gYa" type="button">Ya transferí</button>
     <a class="btn" target="_blank" rel="noopener" href="${WA}${encodeURIComponent(`Hola 10Mil11! Transferí ${fmt(total)} por el pedido ${P} (${l.nombre||'lámpara'}). Te mando el comprobante.`)}">Mandar el comprobante</a></div>
-    <p class="fine" id="gYaMsg">Con la transferencia confirmada te pasamos la fecha de entrega.</p>`;
+    <p class="fine" id="gYaMsg">${FECHA?`Fecha de entrega: <b>${FECHA}</b>. `:''}Apenas veamos la transferencia te confirmamos por WhatsApp.</p>`;
   $('gCaja').hidden=false;
   $('gCaja').querySelectorAll('.copiar').forEach(b=>b.addEventListener('click',()=>{
     (navigator.clipboard?navigator.clipboard.writeText(b.dataset.c):Promise.reject()).then(()=>{b.textContent='copiado';setTimeout(()=>b.textContent='copiar',1500);}).catch(()=>{});
