@@ -126,9 +126,9 @@ function wa(t){ $('gWa').href=WA+encodeURIComponent(t); }
 function pasos(sena,envio){
   $('gPasos').innerHTML=[
     `<b>Te escribimos por WhatsApp</b> para confirmar tu pedido y la fecha de entrega.`,
-    `<b>El taller arma tu lámpara</b>: se corta, se pinta y se viste cairel por cairel. Unos 30 días, a veces menos.`,
+    `<b>El taller arma tu lámpara</b>: se corta, se pinta y se viste cairel por cairel. Hasta 30 días en la mayoría de los casos; depende de cada lámpara.`,
     sena?`<b>Te avisamos cuando esté lista</b> y abonás el 50% restante.`:`<b>Te avisamos cuando esté lista.</b>`,
-    envio?`<b>Sale por encomienda</b> a la dirección que nos dejaste; el envío se cotiza según tu localidad.`:`<b>La retirás en el taller</b>, en La Plata: te pasamos la dirección por WhatsApp.`,
+    envio?`<b>Sale por Vía Cargo</b> a la dirección que nos dejaste; el envío se cotiza según tu localidad y se paga aparte.`:`<b>La retirás en el taller</b>, en La Plata: te pasamos la dirección por WhatsApp.`,
   ].map(x=>`<li>${x}</li>`).join('');
   $('gSig').hidden=false;
 }
