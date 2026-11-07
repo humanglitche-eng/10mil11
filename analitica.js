@@ -7,7 +7,7 @@
  *
  *   producto     se abrió la ficha de una lámpara (modelo)
  *   comprar      pasó al formulario de compra (modelo)
- *   pedido       la API tomó el pedido (modelo, modo: total|sena, pago: mp|trf,
+ *   pedido       la API tomó el pedido (modelo, modo: total|sena, pago: mp|go|trf,
  *                entrega: envio|retiro); sale justo antes de ir a pagar
  *   pedido-error el formulario se envió pero la API no tomó el pedido (modelo)
  *   resultado    cómo terminó, en gracias.html (estado: pagado | aprobado |

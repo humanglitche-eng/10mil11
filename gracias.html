@@ -10,10 +10,10 @@
 <meta name="robots" content="noindex">
 <!--
   La última página de la compra (2026-10-18). Llega acá:
-  · desde Mercado Pago, con ?p=<código>&r=ok|no|pendiente (la API arma la vuelta
+  · desde Mercado Pago o GoCuotas (este con &via=go), con ?p=<código>&r=ok|no|pendiente (la API arma la vuelta
     con `volver`, que solo acepta un origen de la marca);
   · desde la ventana de compra, con ?p=<código>&via=trf (transferencia), o
-    &via=mp&r=no si Mercado Pago no se pudo abrir.
+    &via=mp|go&r=no si el proveedor no se pudo abrir.
   Lo que se muestra sale de la API (el pedido, si quedó pago, los datos para
   transferir); sessionStorage solo aporta la foto y la entrega para el resumen.
 -->
@@ -109,6 +109,9 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const fmt=v=>'$ '+Number(v).toLocaleString('es-AR');
 const pedir=(ruta,op)=>fetch(`${API}/v1/10mil11${ruta}`,op).then(r=>r.ok?r.json():Promise.reject(r.status));
 let local={}; try{ local=JSON.parse(sessionStorage.getItem('10mil11:'+P)||'{}')||{}; }catch(_){}
+// Quién cobró: GoCuotas lo dice el `via` (o lo que eligió en la ventana de compra).
+const ES_GO=VIA==='go'||(!VIA&&local.forma==='go');
+const COBRA=ES_GO?{id:'gocuotas',nom:'GoCuotas'}:{id:'mercadopago',nom:'Mercado Pago'};
 // Cómo terminó la compra, una vez por pedido y estado (recargar no vuelve a contar). Nunca el código.
 function resultado(estado){
   const k='m11:'+P+':'+estado; try{ if(sessionStorage.getItem(k)) return; sessionStorage.setItem(k,'1'); }catch(_){}
@@ -146,14 +149,14 @@ async function arrancar(){
   if(p.estado==='cancelado'){ decir('Pedido cancelado','bad','Este pedido está cancelado','Si fue un error, escribinos por WhatsApp y lo armamos de nuevo.'); return; }
 
   if(VIA==='trf') return transferencia(p,l,total,sena,envio);
-  // Mercado Pago (o se entró directo con el código): lo que manda es si la API lo dio por pago.
+  // Mercado Pago, GoCuotas (o se entró directo con el código): lo que manda es si la API lo dio por pago.
   const pago=()=>pedir(`/pedidos/${encodeURIComponent(P)}/pago`).catch(()=>null);
   let g=await pago();
   if(g&&g.pagado) return pagado(sena,envio);
   if(R==='no'){
     resultado('rechazado');
     decir('El pago no se completó','bad','No se pudo completar el pago',`Tu pedido <b>${esc(P)}</b> quedó anotado, pero el pago no se hizo. Podés probar de nuevo o escribirnos.`);
-    $('gCaja').innerHTML=`<button class="btn solid" id="gReint" type="button">Probar de nuevo con Mercado Pago</button><p class="fine" id="gReMsg"></p>`;
+    $('gCaja').innerHTML=`<button class="btn solid" id="gReint" type="button">Probar de nuevo con ${COBRA.nom}</button><p class="fine" id="gReMsg"></p>`;
     $('gCaja').hidden=false;
     $('gReint').addEventListener('click',reintentar);
     return;
@@ -164,12 +167,12 @@ async function arrancar(){
     pasos(sena,envio); return;
   }
   if(R==='ok'){
-    decir('Pago aprobado','ok','¡Gracias por <i>tu compra</i>!',`Mercado Pago aprobó tu pago. Estamos terminando de confirmarlo…`);
+    decir('Pago aprobado','ok','¡Gracias por <i>tu compra</i>!',`${COBRA.nom} aprobó tu pago. Estamos terminando de confirmarlo…`);
     pasos(sena,envio);
     for(let i=0;i<10&&!(g&&g.pagado);i++){ await new Promise(r=>setTimeout(r,2500)); g=await pago(); }
     if(g&&g.pagado) return pagado(sena,envio);
     resultado('aprobado');
-    $('gL').innerHTML=`Mercado Pago aprobó tu pago y nos lo confirma en unos minutos: no hace falta que hagas nada más. Tu pedido es <b>${esc(P)}</b>.`;
+    $('gL').innerHTML=`${COBRA.nom} aprobó tu pago y nos lo confirma en unos minutos: no hace falta que hagas nada más. Tu pedido es <b>${esc(P)}</b>.`;
     return;
   }
   resultado('anotado');
@@ -209,10 +212,10 @@ async function transferencia(p,l,total,sena,envio){
 }
 
 async function reintentar(){
-  const b=$('gReint'); b.disabled=true; $('gReMsg').textContent='Abriendo Mercado Pago…';
-  const volver=new URL('gracias.html',location.href).href;
+  const b=$('gReint'); b.disabled=true; $('gReMsg').textContent=`Abriendo ${COBRA.nom}…`;
+  const volver=new URL('gracias.html'+(ES_GO?'?via=go':''),location.href).href;
   try{
-    const r=await fetch(`${API}/v1/10mil11/pedidos/${encodeURIComponent(P)}/pagar`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({proveedor:'mercadopago',volver})});
+    const r=await fetch(`${API}/v1/10mil11/pedidos/${encodeURIComponent(P)}/pagar`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({proveedor:COBRA.id,volver})});
     const j=await r.json().catch(()=>({}));
     if(r.ok&&j.url){ location.href=j.url; return; }
     throw new Error(j.error||'no respondió');

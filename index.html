@@ -494,7 +494,7 @@
   </div>
   <ol class="pasos">
     <li class="paso"><b>1</b><h3>Asesoría</h3><p>Por WhatsApp: el espacio, la altura del techo, el largo de la mesa. Definimos modelo, medidas, caireles, hierro y cadena.</p></li>
-    <li class="paso"><b>2</b><h3>Seña del 50%</h3><p>Por transferencia, o en efectivo si estás cerca.<span data-si-reserva hidden> También acá mismo, con el botón «Comprar»: pagás el total o la seña con Mercado Pago o transferencia.</span> Con la seña te damos la fecha de entrega.</p></li>
+    <li class="paso"><b>2</b><h3>Seña del 50%</h3><p>Por transferencia, o en efectivo si estás cerca.<span data-si-reserva hidden> También acá mismo, con el botón «Comprar»: pagás el total o la seña con <span id="pasoFormas">Mercado Pago o transferencia</span>.</span> Con la seña te damos la fecha de entrega.</p></li>
     <li class="paso"><b>3</b><h3>Taller</h3><p>Unos 30 días; a veces 20, y las chiquitas salen antes. Se corta, se pinta y se viste cairel por cairel.</p></li>
     <li class="paso"><b>4</b><h3>Lista</h3><p>Te avisamos que está terminada y abonás el 50% restante.</p></li>
     <li class="paso"><b>5</b><h3>Entrega</h3><p>Por encomienda a cualquier punto del país, a cargo del comprador, o la retirás en el taller.</p></li>
@@ -622,6 +622,7 @@
         <label class="fld" id="fDirL" hidden>Dirección, localidad y código postal<input id="fDir" autocomplete="street-address" maxlength="300"></label>
         <span class="sub-l">Pagás con</span>
         <div class="chips" id="pvForma"></div>
+        <p class="fine" id="pvGo" hidden>GoCuotas te pide una tarjeta de débito y te valida con un SMS al celular que dejaste arriba.</p>
         <p class="pv-tot" id="pvTot"></p>
         <button class="btn solid" id="pvPagar" type="submit">Comprar</button>
         <p class="fine" id="pvMsg" role="status" aria-live="polite"></p>
@@ -850,8 +851,9 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
 'use strict';
 // ── La lámpara: ventana de producto (expositor de fotos) y compra directa ──
 // La foto o el nombre de una tarjeta abren la ventana; «Comprar» va derecho al
-// formulario: nombre, WhatsApp, mail, entrega, total o seña, Mercado Pago o
-// transferencia. La página nunca manda precios: pide la variante (`total` o
+// formulario: nombre, WhatsApp, mail, entrega, total o seña, Mercado Pago,
+// GoCuotas (cuotas con débito) o transferencia: se ofrece lo que el comercio tenga
+// prendido en su panel. La página nunca manda precios: pide la variante (`total` o
 // `sena`) y la API calcula lo que se cobra. Mercado Pago devuelve al cliente a
 // gracias.html (`volver`, que la API solo acepta hacia un origen de la marca).
 // En la vitrina se muestra todo igual, pero comprar lleva al sitio de la marca.
@@ -859,6 +861,9 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
 const API=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'http://127.0.0.1:3939':'https://api.hg-vl.com';
 const SITIO='https://www.10mil11.com/';
 const RES={listo:false,formas:[],trf:null,precios:{}};
+// Las formas que cobra un proveedor: `id` es el de la API. La transferencia no pasa por acá.
+const ONLINE={mp:{id:'mercadopago',nom:'Mercado Pago',chip:'Mercado Pago'},
+              go:{id:'gocuotas',nom:'GoCuotas',chip:'GoCuotas · cuotas con débito'}};
 const $=id=>document.getElementById(id);
 const dlg=$('pv'), fz=$('pvFoto');
 let id=null, foto=0, modo='total', forma='', entrega='', idem='', enCurso=false;
@@ -868,7 +873,11 @@ let medidoForm='';   // analítica: «comprar» una vez por ficha abierta (desde
 Promise.all(['cobro','catalogo'].map(s=>fetch(`${API}/v1/10mil11/${s}`).then(r=>r.ok?r.json():null).catch(()=>null)))
   .then(([cobro,cat])=>{
     if(!cobro||!cat||!Array.isArray(cat.items)) return;
-    if((cobro.online||[]).some(o=>o.proveedor==='mercadopago')) RES.formas.push('mp');
+    // Un proveedor «en prueba» no se le ofrece a un cliente de verdad: sus pagos no son
+    // reales y el pedido quedaría como pagado. Para probarlo: www.10mil11.com/?probar
+    const probando=new URLSearchParams(location.search).has('probar');
+    const on=(cobro.online||[]).filter(o=>o.entorno==='produccion'||probando).map(o=>o.proveedor);
+    Object.keys(ONLINE).forEach(f=>{ if(on.includes(ONLINE[f].id)) RES.formas.push(f); });
     if(cobro.transferencia){ RES.formas.push('trf'); RES.trf=cobro.transferencia; }
     cat.items.forEach(it=>{
       const v=Object.fromEntries((it.variantes||[]).map(x=>[x.slug,x.precio/100]));
@@ -877,6 +886,8 @@ Promise.all(['cobro','catalogo'].map(s=>fetch(`${API}/v1/10mil11/${s}`).then(r=>
     if(!RES.formas.length||!Object.keys(RES.precios).length) return;
     RES.listo=true; window.RESERVA=RES;
     forma=RES.formas[0];                       // Mercado Pago primero si está: un paso menos
+    const noms=RES.formas.map(f=>ONLINE[f]?ONLINE[f].nom:'transferencia');
+    $('pasoFormas').textContent=noms.length>1?noms.slice(0,-1).join(', ')+' o '+noms[noms.length-1]:noms[0];
     document.querySelectorAll('[data-si-reserva]').forEach(e=>e.hidden=false);
     renderGrid();
     if(id) pintar();
@@ -979,12 +990,13 @@ function form(){
   if(!modos.includes(modo)) modo=modos[0];
   chips($('pvModo'),modos.map(m=>[m,m==='total'?`Pago total · ${fmt(pr.total)}`:`Seña 50% · ${fmt(pr.sena)}`]),modo,v=>modo=v);
   chips($('pvEnt'),[['envio','Envío a domicilio'],['retiro','Retiro en el taller']],entrega,v=>entrega=v);
-  chips($('pvForma'),RES.formas.map(f=>[f,f==='mp'?'Mercado Pago':'Transferencia']),forma,v=>forma=v);
+  chips($('pvForma'),RES.formas.map(f=>[f,ONLINE[f]?ONLINE[f].chip:'Transferencia']),forma,v=>forma=v);
+  $('pvGo').hidden=forma!=='go';
   $('fDirL').hidden=entrega!=='envio';
   const monto=modo==='total'?pr.total:pr.sena;
   $('pvTot').innerHTML=modo==='total'?`Total: <b>${fmt(pr.total)}</b>`:`Seña: <b>${fmt(pr.sena)}</b> · el resto (${fmt(pr.saldo)}) cuando esté lista`;
   $('pvPagar').textContent=MUESTRA?'Comprar en www.10mil11.com ↗'
-    :forma==='mp'?`Pagar ${fmt(monto)} con Mercado Pago`:forma==='trf'?'Confirmar y ver los datos para transferir':'Elegí cómo pagar';
+    :ONLINE[forma]?`Pagar ${fmt(monto)} con ${ONLINE[forma].nom}`:forma==='trf'?'Confirmar y ver los datos para transferir':'Elegí cómo pagar';
   $('pvPagar').disabled=enCurso;
 }
 $('pvForm').addEventListener('input',()=>{ $('pvMsg').textContent=''; });
@@ -1005,7 +1017,7 @@ $('pvForm').addEventListener('submit',async e=>{
   const cuerpo={items:[{item:d.a,variante:modo,cantidad:1}],
     cliente:{nombre:nom.slice(0,120),telefono:tel,email:mail.slice(0,254),...(entrega==='envio'?{direccion:dir.slice(0,300)}:{})},
     nota:`${modo==='total'?'Compra web (pago total)':'Reserva web con seña'} · ${d.full} · ${entrega==='envio'?'Envío a '+dir:'Retira en el taller'}`.slice(0,500),
-    idem,canal:'web',pago:forma==='mp'?'online':'transferencia',entrega};
+    idem,canal:'web',pago:ONLINE[forma]?'online':'transferencia',entrega};
   const gracias=new URL('gracias.html',location.href);
   try{
     const r=await fetch(`${API}/v1/10mil11/pedidos`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(cuerpo)});
@@ -1014,13 +1026,14 @@ $('pvForm').addEventListener('submit',async e=>{
     try{ sessionStorage.setItem('10mil11:'+p.codigo,JSON.stringify({n:d.full,img:d.img,modo,forma,entrega})); }catch(_){}
     medir('pedido',{modelo:d.full,modo,pago:forma,entrega});
     gracias.searchParams.set('p',p.codigo);
-    if(forma==='mp'){
-      msg('Abriendo Mercado Pago…');
+    if(ONLINE[forma]){
+      msg(`Abriendo ${ONLINE[forma].nom}…`);
+      // GoCuotas vuelve con r=ok|no igual que Mercado Pago: el `via` dice cuál fue.
       const q=await fetch(`${API}/v1/10mil11/pedidos/${encodeURIComponent(p.codigo)}/pagar`,{method:'POST',
-        headers:{'content-type':'application/json'},body:JSON.stringify({proveedor:'mercadopago',volver:new URL('gracias.html',location.href).href})});
+        headers:{'content-type':'application/json'},body:JSON.stringify({proveedor:ONLINE[forma].id,volver:new URL('gracias.html'+(forma==='go'?'?via=go':''),location.href).href})});
       const j=await q.json().catch(()=>({}));
       if(q.ok&&j.url){ location.href=j.url; return; }
-      gracias.searchParams.set('via','mp'); gracias.searchParams.set('r','no');
+      gracias.searchParams.set('via',forma); gracias.searchParams.set('r','no');
     } else gracias.searchParams.set('via','trf');
     location.href=gracias.href;
   }catch(err){
